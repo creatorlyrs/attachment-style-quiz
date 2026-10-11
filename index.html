@@ -751,6 +751,37 @@
     box-shadow: 0 0 16px rgba(168, 85, 247, 0.1);
   }
 
+
+  .name-field {
+    margin: 0 0 0.9rem;
+  }
+  .name-field label {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+    margin-bottom: 0.4rem;
+    line-height: 1.5;
+  }
+  .name-field input {
+    width: 100%;
+    font-family: var(--font);
+    font-size: 1rem;
+    color: var(--ink);
+    padding: 0.7rem 0.85rem;
+    border-radius: 3px;
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    background: rgba(3, 6, 14, 0.65);
+    outline: none;
+    box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.08) inset;
+  }
+  .name-field input:focus {
+    border-color: rgba(103, 232, 249, 0.65);
+    box-shadow: 0 0 18px rgba(34, 211, 238, 0.15);
+  }
+  .name-field input::placeholder {
+    color: #64748b;
+  }
   .cta-block { margin-top: 1.15rem; }
   .cta-meta {
     text-align: center;
@@ -1349,6 +1380,11 @@
           本測驗僅供自我探索與教育用途，<strong>並非臨床診斷</strong>。依戀傾向可隨經驗、關係品質與反思逐漸改變。若你目前感到十分辛苦，建議尋求可信之人或專業支援。
         </p>
 
+        <div class="name-field">
+          <label for="user-name">你的名字（選填，將顯示於結果卡）</label>
+          <input type="text" id="user-name" name="user-name" maxlength="20" placeholder="例如：小明" autocomplete="nickname" />
+        </div>
+
         <div class="cta-block">
           <button type="button" class="btn" id="btn-start">開始測驗</button>
           <p class="cta-meta">12 題情境題 · 約 3–5 分鐘</p>
@@ -1738,7 +1774,13 @@
       tipHTML("成長方向", style.growth);
 
     window.__lastResultText = buildCopyText(style, anxiety, avoidance);
-    window.__lastResultPayload = { anxiety: anxiety, avoidance: avoidance, key: key, style: style };
+    window.__lastResultPayload = {
+      anxiety: anxiety,
+      avoidance: avoidance,
+      key: key,
+      style: style,
+      displayName: (window.__userDisplayName || "").trim()
+    };
 
     // Reset photo while generating
     var img = $("result-photo");
@@ -1816,6 +1858,7 @@
   function buildCopyText(style, anxiety, avoidance) {
     return [
       "【依戀型人格測驗 · 教育用途】",
+      "對象：" + ((window.__userDisplayName || "").trim() || "匿名探索者"),
       "傾向：" + style.zh + "（" + style.en + "）",
       "焦慮：" + anxiety.toFixed(2) + "　迴避：" + avoidance.toFixed(2),
       "",
@@ -1836,6 +1879,11 @@
   }
 
   $("btn-start").addEventListener("click", () => {
+    var nameEl = $("user-name");
+    var raw = nameEl ? String(nameEl.value || "").trim() : "";
+    // strip control chars; keep formal display name
+    raw = raw.replace(/[\u0000-\u001F\u007F]/g, "").slice(0, 20);
+    window.__userDisplayName = raw;
     current = 0;
     answers.fill(null);
     showScreen("quiz");
@@ -2149,15 +2197,35 @@
     ctx.arc(plotX, plotY, 18, 0, Math.PI * 2);
     ctx.stroke();
 
-    // Score panels
-    var panY = fy + 1120;
-    var panW = (fw - 48) / 2;
-    var panH = 200;
-    var panGap = 32;
-    var pan1x = fx + 24;
-    var pan2x = fx + 24 + panW + panGap;
+    // Score panels — keep strictly inside HUD frame
+    var panPad = 36;
+    var panGap = 24;
+    var panH = 190;
+    var panY = fy + 1100;
+    var panInner = fw - panPad * 2 - panGap;
+    var panW = Math.floor(panInner / 2);
+    var pan1x = fx + panPad;
+    var pan2x = pan1x + panW + panGap;
+    // Safety clamp: right edge must not pass fx+fw-panPad
+    if (pan2x + panW > fx + fw - panPad) {
+      panW = Math.floor((fw - panPad * 2 - panGap) / 2);
+      pan1x = fx + panPad;
+      pan2x = pan1x + panW + panGap;
+    }
+
+    function fitText(text, maxW, font) {
+      ctx.font = font;
+      if (ctx.measureText(text).width <= maxW) return text;
+      var t = String(text);
+      while (t.length > 1 && ctx.measureText(t + "…").width > maxW) {
+        t = t.slice(0, -1);
+      }
+      return t + "…";
+    }
 
     function scorePanel(px, title, code, val, high, colors) {
+      var inset = 22;
+      var maxTextW = panW - inset * 2;
       ctx.fillStyle = "rgba(3,6,14,0.75)";
       roundRect(ctx, px, panY, panW, panH, 6);
       ctx.fill();
@@ -2167,30 +2235,47 @@
       ctx.stroke();
 
       ctx.textAlign = "left";
-      ctx.font = "700 28px 'Noto Sans TC', sans-serif";
+      ctx.font = "700 26px 'Noto Sans TC', sans-serif";
       ctx.fillStyle = "#e2e8f0";
-      ctx.fillText(title, px + 28, panY + 48);
-      ctx.font = "600 18px Orbitron, sans-serif";
+      ctx.fillText(fitText(title, maxTextW * 0.62, ctx.font), px + inset, panY + 46);
+      ctx.font = "600 16px Orbitron, sans-serif";
       ctx.fillStyle = "#64748b";
-      ctx.fillText(code, px + 28, panY + 78);
+      ctx.fillText(fitText(code, maxTextW * 0.7, ctx.font), px + inset, panY + 74);
 
       ctx.textAlign = "right";
-      ctx.font = "700 48px Orbitron, sans-serif";
+      ctx.font = "700 44px Orbitron, sans-serif";
       ctx.fillStyle = colors[1];
-      ctx.fillText(val.toFixed(1), px + panW - 28, panY + 64);
+      ctx.fillText(val.toFixed(1), px + panW - inset, panY + 60);
 
-      drawScoreBar(ctx, px + 28, panY + 110, panW - 56, 16, val, colors);
+      var barW = Math.max(40, panW - inset * 2);
+      drawScoreBar(ctx, px + inset, panY + 100, barW, 14, val, colors);
 
       ctx.textAlign = "left";
-      ctx.font = "500 22px 'Noto Sans TC', sans-serif";
+      ctx.font = "500 20px 'Noto Sans TC', sans-serif";
       ctx.fillStyle = "#94a3b8";
-      ctx.fillText(high ? "偏高" : "偏低", px + 28, panY + 168);
+      ctx.fillText(high ? "偏高" : "偏低", px + inset, panY + 156);
       ctx.textAlign = "right";
-      ctx.fillText("1.0 – 5.0", px + panW - 28, panY + 168);
+      ctx.fillText("1.0 – 5.0", px + panW - inset, panY + 156);
     }
 
     scorePanel(pan1x, "焦慮軸讀數", "AXIS · ANXIETY", anxiety, anxiety > 3, ["#be185d", "#f9a8d4"]);
     scorePanel(pan2x, "迴避軸讀數", "AXIS · AVOIDANCE", avoidance, avoidance > 3, ["#047857", "#6ee7b7"]);
+
+    // Personalized name line (on image only)
+    var displayName = (payload.displayName || "").trim();
+    if (!displayName) displayName = "匿名探索者";
+    var nameLine = "給 " + displayName;
+    ctx.textAlign = "center";
+    ctx.font = "800 40px 'Noto Sans TC', sans-serif";
+    nameLine = fitText(nameLine, fw - 80, ctx.font);
+    ctx.fillStyle = "#e0f2fe";
+    ctx.shadowColor = "rgba(103,232,249,0.35)";
+    ctx.shadowBlur = 12;
+    ctx.fillText(nameLine, W / 2, panY + panH + 64);
+    ctx.shadowBlur = 0;
+    ctx.font = "500 20px 'Noto Sans TC', sans-serif";
+    ctx.fillStyle = "#64748b";
+    ctx.fillText("專屬結果卡", W / 2, panY + panH + 98);
 
     // Disclaimer — no tips
     ctx.textAlign = "center";
