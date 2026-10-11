@@ -1012,12 +1012,17 @@
     .btn-row-3 .btn-save-story { grid-column: auto; }
   }
   #story-canvas {
-    position: absolute;
-    left: -9999px;
-    top: 0;
-    width: 1080px;
-    height: 1920px;
-    pointer-events: none;
+    position: fixed !important;
+    left: -10000px !important;
+    top: 0 !important;
+    width: 1080px !important;
+    height: 1920px !important;
+    max-width: none !important;
+    max-height: none !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    z-index: -1 !important;
+    visibility: hidden !important;
   }
 
   #story-preview-modal {
@@ -1095,6 +1100,7 @@
   }
 
   .result-photo-wrap {
+    position: relative;
     width: min(100%, 360px);
     margin: 0.35rem auto 0.75rem;
     border-radius: 4px;
@@ -1105,21 +1111,32 @@
     aspect-ratio: 9 / 16;
   }
   #result-photo {
-    display: block;
+    position: absolute;
+    inset: 0;
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: contain;
+    display: none;
     -webkit-touch-callout: default;
     user-select: none;
     -webkit-user-select: none;
   }
+  .result-photo-wrap.is-ready #result-photo {
+    display: block;
+  }
   .result-photo-placeholder {
+    position: absolute;
+    inset: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 280px;
     color: #64748b;
     font-size: 0.85rem;
     letter-spacing: 0.04em;
+    z-index: 1;
+  }
+  .result-photo-wrap.is-ready .result-photo-placeholder {
+    display: none !important;
   }
   .result-blurb-text {
     font-size: 0.9rem;
@@ -1395,7 +1412,7 @@
 
         <div class="result-photo-wrap" id="result-photo-wrap">
           <div class="result-photo-placeholder" id="result-photo-placeholder">正在產生結果圖…</div>
-          <img id="result-photo" alt="依戀型人格測驗結果圖" hidden />
+          <img id="result-photo" alt="依戀型人格測驗結果圖" />
         </div>
         <p class="save-hint" style="margin:0.45rem 0 0.75rem;text-align:center;">長按上方圖片，可儲存至相簿</p>
 
@@ -1415,7 +1432,6 @@
         </p>
       </div>
 
-      <canvas id="story-canvas" width="1080" height="1920" aria-hidden="true"></canvas>
     </section>
 
     <footer>
@@ -1424,6 +1440,7 @@
   </div>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <canvas id="story-canvas" width="1080" height="1920" aria-hidden="true"></canvas>
 
 <script>
 /**
@@ -1726,14 +1743,13 @@
     // Reset photo while generating
     var img = $("result-photo");
     var ph = $("result-photo-placeholder");
+    var wrap = $("result-photo-wrap");
+    if (wrap) wrap.classList.remove("is-ready");
     if (img) {
-      img.hidden = true;
       img.removeAttribute("src");
+      img.onload = null;
     }
-    if (ph) {
-      ph.hidden = false;
-      ph.textContent = "正在產生結果圖…";
-    }
+    if (ph) ph.textContent = "正在產生結果圖…";
     var shareBtn = $("btn-share-story");
     if (shareBtn) shareBtn.hidden = true;
 
@@ -1744,8 +1760,10 @@
   function applyResultPhotoBlob(blob) {
     var img = $("result-photo");
     var ph = $("result-photo-placeholder");
+    var wrap = $("result-photo-wrap");
     if (!blob || !img) {
       if (ph) ph.textContent = "結果圖產生失敗，請再測一次";
+      if (wrap) wrap.classList.remove("is-ready");
       return;
     }
     if (__storyBlobUrl) {
@@ -1753,9 +1771,11 @@
     }
     __storyBlob = blob;
     __storyBlobUrl = URL.createObjectURL(blob);
+    img.onload = function () {
+      if (wrap) wrap.classList.add("is-ready");
+    };
     img.src = __storyBlobUrl;
-    img.hidden = false;
-    if (ph) ph.hidden = true;
+    if (wrap) wrap.classList.add("is-ready");
 
     var shareBtn = $("btn-share-story");
     try {
@@ -1887,20 +1907,25 @@
   }
 
   function drawCornerBrackets(ctx, x, y, w, h, len, colorA, colorB) {
-    ctx.lineWidth = 3;
+    var lw = 3;
+    var o = lw / 2; // inset so stroke is not clipped at frame edge
+    var L = Math.min(len, 28);
+    ctx.lineWidth = lw;
+    ctx.lineCap = "square";
+    ctx.lineJoin = "miter";
     ctx.strokeStyle = colorA;
     ctx.beginPath();
-    ctx.moveTo(x, y + len); ctx.lineTo(x, y); ctx.lineTo(x + len, y);
+    ctx.moveTo(x + o, y + L); ctx.lineTo(x + o, y + o); ctx.lineTo(x + L, y + o);
     ctx.stroke();
     ctx.beginPath();
-    ctx.moveTo(x + w - len, y + h); ctx.lineTo(x + w, y + h); ctx.lineTo(x + w, y + h - len);
+    ctx.moveTo(x + w - L, y + h - o); ctx.lineTo(x + w - o, y + h - o); ctx.lineTo(x + w - o, y + h - L);
     ctx.stroke();
     ctx.strokeStyle = colorB;
     ctx.beginPath();
-    ctx.moveTo(x + w - len, y); ctx.lineTo(x + w, y); ctx.lineTo(x + w, y + len);
+    ctx.moveTo(x + w - L, y + o); ctx.lineTo(x + w - o, y + o); ctx.lineTo(x + w - o, y + L);
     ctx.stroke();
     ctx.beginPath();
-    ctx.moveTo(x, y + h - len); ctx.lineTo(x, y + h); ctx.lineTo(x + len, y + h);
+    ctx.moveTo(x + o, y + h - L); ctx.lineTo(x + o, y + h - o); ctx.lineTo(x + L, y + h - o);
     ctx.stroke();
   }
 
@@ -1968,8 +1993,8 @@
       ctx.fill();
     }
 
-    // HUD frame inset
-    var fx = 64, fy = 96, fw = W - 128, fh = H - 192;
+    // HUD frame inset — keep well inside canvas so strokes never clip
+    var fx = 88, fy = 120, fw = W - 176, fh = H - 240;
     ctx.fillStyle = "rgba(8,12,24,0.55)";
     roundRect(ctx, fx, fy, fw, fh, 8);
     ctx.fill();
@@ -1977,7 +2002,7 @@
     ctx.lineWidth = 2;
     roundRect(ctx, fx, fy, fw, fh, 8);
     ctx.stroke();
-    drawCornerBrackets(ctx, fx, fy, fw, fh, 36, "#22d3ee", "#a855f7");
+    drawCornerBrackets(ctx, fx, fy, fw, fh, 28, "#22d3ee", "#a855f7");
 
     // Top badge
     ctx.fillStyle = "#67e8f9";
@@ -2182,13 +2207,19 @@
 
   function ensureStoryCanvas() {
     var canvas = $("story-canvas");
-    if (canvas) return canvas;
-    canvas = document.createElement("canvas");
-    canvas.id = "story-canvas";
+    if (!canvas) {
+      canvas = document.createElement("canvas");
+      canvas.id = "story-canvas";
+      canvas.setAttribute("aria-hidden", "true");
+      document.body.appendChild(canvas);
+    }
     canvas.width = 1080;
     canvas.height = 1920;
-    canvas.setAttribute("aria-hidden", "true");
-    document.body.appendChild(canvas);
+    // Keep drawable bitmap but never participate in layout (iOS-safe)
+    canvas.style.cssText = "position:fixed!important;left:-10000px!important;top:0!important;width:1080px!important;height:1920px!important;opacity:0!important;pointer-events:none!important;z-index:-1!important;visibility:hidden!important;";
+    if (canvas.parentElement !== document.body) {
+      document.body.appendChild(canvas);
+    }
     return canvas;
   }
 
