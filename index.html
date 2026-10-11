@@ -1093,6 +1093,60 @@
   #story-preview-modal .preview-fallback button:hover {
     color: #94a3b8;
   }
+
+  .result-photo-wrap {
+    width: min(100%, 360px);
+    margin: 0.35rem auto 0.75rem;
+    border-radius: 4px;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    box-shadow: 0 0 40px rgba(56, 189, 248, 0.1), 0 20px 60px rgba(0,0,0,0.45);
+    overflow: hidden;
+    background: #03050c;
+    aspect-ratio: 9 / 16;
+  }
+  #result-photo {
+    display: block;
+    width: 100%;
+    height: auto;
+    -webkit-touch-callout: default;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .result-photo-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 280px;
+    color: #64748b;
+    font-size: 0.85rem;
+    letter-spacing: 0.04em;
+  }
+  .result-blurb-text {
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    line-height: 1.7;
+    margin: 0.5rem 0 0.85rem;
+  }
+  .result-section-label {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    margin: 1rem 0 0.55rem;
+  }
+  .result-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.55rem;
+    margin-top: 0.75rem;
+  }
+  .result-actions .btn-wide {
+    grid-column: 1 / -1;
+  }
+  @media (max-width: 400px) {
+    .result-actions { grid-template-columns: 1fr; }
+    .result-actions .btn-wide { grid-column: auto; }
+  }
   .save-hint {
     text-align: center;
     font-size: 0.72rem;
@@ -1324,186 +1378,44 @@
     </section>
 
     <!-- ========== RESULT ========== -->
-    <section id="screen-result" class="screen hidden" aria-labelledby="result-title">
+    <section id="screen-result" class="screen hidden" aria-labelledby="result-heading">
       <div class="hud-frame" id="result-card">
         <div class="c-tr"></div>
         <div class="c-bl"></div>
 
         <div class="top-row">
-          <div class="badge"><span class="dot"></span>RESULT · TENDENCY MAP</div>
+          <div class="badge"><span class="dot"></span>RESULT · PHOTO CARD</div>
           <div class="chips">
             <span class="chip chip-ok">系統校準完成</span>
             <span class="chip chip-lock">讀取完成</span>
           </div>
         </div>
 
-        <div class="result-hero" id="result-hero">
-          <p class="result-kicker">讀取完成 · 目前傾向</p>
-          <h2 class="result-title" id="result-title">—</h2>
-          <p class="result-en" id="result-en"></p>
-          <p class="result-blurb" id="result-blurb"></p>
+        <h2 id="result-heading" class="visually-hidden">測驗結果</h2>
+
+        <div class="result-photo-wrap" id="result-photo-wrap">
+          <div class="result-photo-placeholder" id="result-photo-placeholder">正在產生結果圖…</div>
+          <img id="result-photo" alt="依戀型人格測驗結果圖" hidden />
         </div>
+        <p class="save-hint" style="margin:0.45rem 0 0.75rem;text-align:center;">長按上方圖片，可儲存至相簿</p>
 
-        <div class="stage" id="result-stage" aria-label="結果神經星圖">
-          <div class="atm">
-            <div class="atm-tl"></div>
-            <div class="atm-tr"></div>
-            <div class="atm-bl"></div>
-            <div class="atm-br"></div>
-          </div>
-          <div class="dust"></div>
-          <div class="radar"></div>
-          <div class="beam-h"></div>
-          <div class="beam-v"></div>
-
-          <svg class="links" id="result-links" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-            <defs>
-              <linearGradient id="litLine" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.45"/>
-                <stop offset="100%" stop-color="#f472b6" stop-opacity="0.55" id="litLineEnd"/>
-              </linearGradient>
-              <linearGradient id="dimLineR" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.1"/>
-                <stop offset="100%" stop-color="#a855f7" stop-opacity="0.07"/>
-              </linearGradient>
-              <filter id="glowLine" x="-30%" y="-30%" width="160%" height="160%">
-                <feGaussianBlur stdDeviation="0.8" result="b"/>
-                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-              </filter>
-            </defs>
-            <line id="link-anxious"  data-key="anxious"  x1="50" y1="50" x2="22" y2="22" stroke="url(#dimLineR)" stroke-width="0.35" stroke-dasharray="1.2 1.8"/>
-            <line id="link-fearful"  data-key="fearful"  x1="50" y1="50" x2="78" y2="22" stroke="url(#dimLineR)" stroke-width="0.35" stroke-dasharray="1.2 1.8"/>
-            <line id="link-secure"   data-key="secure"   x1="50" y1="50" x2="22" y2="78" stroke="url(#dimLineR)" stroke-width="0.35" stroke-dasharray="1.2 1.8"/>
-            <line id="link-avoidant" data-key="avoidant" x1="50" y1="50" x2="78" y2="78" stroke="url(#dimLineR)" stroke-width="0.35" stroke-dasharray="1.2 1.8"/>
-          </svg>
-
-          <div class="axis-label ax-top">焦慮偏高</div>
-          <div class="axis-label ax-bottom">焦慮偏低</div>
-          <div class="axis-label ax-left">迴避偏低</div>
-          <div class="axis-label ax-right">迴避偏高</div>
-
-          <div class="hub">
-            <div class="scan-ring">
-              <svg viewBox="0 0 100 100" aria-hidden="true">
-                <defs>
-                  <linearGradient id="scanGradResult" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stop-color="#22d3ee"/>
-                    <stop offset="55%" stop-color="#a855f7"/>
-                    <stop offset="100%" stop-color="#f472b6"/>
-                  </linearGradient>
-                </defs>
-                <circle cx="50" cy="50" r="44" fill="none" stroke="rgba(56,189,248,0.1)" stroke-width="2"/>
-                <circle cx="50" cy="50" r="44" fill="none" stroke="url(#scanGradResult)" stroke-width="2.5"
-                  stroke-linecap="round" stroke-dasharray="200 276" stroke-dashoffset="0" opacity="0.7"/>
-              </svg>
-            </div>
-            <div class="core"></div>
-            <div class="txt">關係自我</div>
-          </div>
-
-          <div class="star s-anxious" data-star="anxious">
-            <div class="orb"></div>
-            <div class="panel">
-              <div class="code">CONST · A01</div>
-              <h3>焦慮／沉迷型</h3>
-              <p>渴望親密，並常尋求確認。</p>
-              <span class="locked-tag">傾向落點</span>
-            </div>
-          </div>
-          <div class="star s-fearful" data-star="fearful">
-            <div class="orb"></div>
-            <div class="panel">
-              <div class="code">CONST · F01</div>
-              <h3>恐懼／矛盾型</h3>
-              <p>想靠近又怕受傷，來回擺盪。</p>
-              <span class="locked-tag">傾向落點</span>
-            </div>
-          </div>
-          <div class="star s-secure" data-star="secure">
-            <div class="orb"></div>
-            <div class="panel">
-              <div class="code">CONST · S01</div>
-              <h3>安全型</h3>
-              <p>親密與自主皆可平衡。</p>
-              <span class="locked-tag">傾向落點</span>
-            </div>
-          </div>
-          <div class="star s-avoidant" data-star="avoidant">
-            <div class="orb"></div>
-            <div class="panel">
-              <div class="code">CONST · V01</div>
-              <h3>迴避／輕視型</h3>
-              <p>重視獨立，壓力時傾向退開。</p>
-              <span class="locked-tag">傾向落點</span>
-            </div>
-          </div>
-
-          <div class="reticle" id="result-reticle" aria-hidden="true">
-            <div class="ring-outer"></div>
-            <div class="ring"></div>
-            <div class="cross-h"></div>
-            <div class="cross-v"></div>
-            <div class="dot"></div>
-          </div>
-          <div class="reticle-label" id="reticle-label">傾向落點</div>
+        <div class="result-actions">
+          <button type="button" class="btn btn-wide" id="btn-share-story" hidden>分享到…</button>
+          <button type="button" class="btn btn-secondary" id="btn-retry">再測一次</button>
+          <button type="button" class="btn btn-ghost" id="btn-copy">複製文字結果</button>
         </div>
+        <p class="save-hint" style="text-align:center;"><button type="button" id="btn-download-fallback" style="background:none;border:none;color:#64748b;font-family:inherit;font-size:0.72rem;text-decoration:underline;cursor:pointer;padding:0;">下載檔案（電腦用）</button></p>
 
-        <div class="hud-readouts">
-          <div class="meter meter-anx">
-            <div class="meter-head">
-              <div>
-                <div class="meter-title">焦慮軸讀數</div>
-                <div class="meter-code">AXIS · ANXIETY</div>
-              </div>
-              <div class="meter-val" id="score-anx-val">—</div>
-            </div>
-            <div class="bar-track"><div class="bar-fill" id="score-anx-bar"></div></div>
-            <div class="bar-ticks"><span>1.0</span><span id="anx-level">—</span><span>5.0</span></div>
-            <div class="meter-note" id="anx-note"></div>
-          </div>
-          <div class="meter meter-avo">
-            <div class="meter-head">
-              <div>
-                <div class="meter-title">迴避軸讀數</div>
-                <div class="meter-code">AXIS · AVOIDANCE</div>
-              </div>
-              <div class="meter-val" id="score-avo-val">—</div>
-            </div>
-            <div class="bar-track"><div class="bar-fill" id="score-avo-bar"></div></div>
-            <div class="bar-ticks"><span>1.0</span><span id="avo-level">—</span><span>5.0</span></div>
-            <div class="meter-note" id="avo-note"></div>
-          </div>
-        </div>
-        <p class="score-note">分數範圍 1–5；中線 3.0（高於為偏高，低於或等於為偏低）。此為產品簡化分界，並非正式臨床量表。傾向不等於永久標籤。</p>
-
+        <p class="result-section-label">結果解讀</p>
+        <p class="result-blurb-text" id="result-blurb"></p>
         <div class="tips" id="result-tips"></div>
+
+        <p class="disclaimer" style="margin-top:1rem;">
+          結果僅供自我探索，<strong>並非臨床診斷</strong>。同一人在不同關係、不同時期也可能呈現不同傾向。分數範圍 1–5；中線 3.0 為產品簡化分界，並非正式臨床量表。
+        </p>
       </div>
 
-      <div class="btn-row btn-row-3">
-        <button type="button" class="btn btn-secondary" id="btn-retry">再測一次</button>
-        <button type="button" class="btn btn-ghost" id="btn-copy">複製結果</button>
-        <button type="button" class="btn btn-save-story" id="btn-save-story">顯示結果圖</button>
-      </div>
-      <p class="save-hint">長按圖片可儲存至相簿</p>
       <canvas id="story-canvas" width="1080" height="1920" aria-hidden="true"></canvas>
-
-      <div id="story-preview-modal" role="dialog" aria-modal="true" aria-labelledby="preview-title" hidden>
-        <p class="preview-hint" id="preview-title">長按下方圖片，選擇「儲存影像」即可存入相簿</p>
-        <div class="preview-frame">
-          <img id="story-preview-img" alt="依戀型人格測驗結果圖" />
-        </div>
-        <div class="preview-actions">
-          <button type="button" class="btn" id="btn-share-story" hidden>分享到…</button>
-          <button type="button" class="btn btn-ghost" id="btn-close-preview">關閉</button>
-        </div>
-        <div class="preview-fallback">
-          <button type="button" id="btn-download-fallback">下載檔案（電腦用）</button>
-        </div>
-      </div>
-
-      <p class="disclaimer" style="margin-top:1.1rem;text-align:center;">
-        結果僅供自我探索，<strong>並非臨床診斷</strong>。同一人在不同關係、不同時期也可能呈現不同傾向。
-      </p>
     </section>
 
     <footer>
@@ -1521,6 +1433,9 @@
  */
 (function () {
   "use strict";
+
+  var __storyBlobUrl = null;
+  var __storyBlob = null;
 
   const LIKERT = [
     { v: 1, label: "非常不同意" },
@@ -1797,38 +1712,81 @@
 
   function renderResult() {
     const { anxiety, avoidance, key, style } = computeScores();
-    const hero = $("result-hero");
-    hero.className = "result-hero theme-" + key;
 
-    $("result-title").textContent = style.zh;
-    $("result-en").textContent = style.en;
     $("result-blurb").textContent = style.blurb;
-
-    const anxHigh = anxiety > 3;
-    const avoHigh = avoidance > 3;
-    $("score-anx-val").textContent = anxiety.toFixed(1);
-    $("score-avo-val").textContent = avoidance.toFixed(1);
-    $("anx-level").textContent = anxHigh ? "偏高" : "偏低";
-    $("avo-level").textContent = avoHigh ? "偏高" : "偏低";
-    $("score-anx-bar").style.width = (((anxiety - 1) / 4) * 100) + "%";
-    $("score-avo-bar").style.width = (((avoidance - 1) / 4) * 100) + "%";
-    $("anx-note").textContent = anxHigh ? "焦慮偏高（較易渴求確認）" : "焦慮偏低（距離較不易觸發警報）";
-    $("avo-note").textContent = avoHigh ? "迴避偏高（較易拉開距離）" : "迴避偏低（較不抗拒親密）";
-
-    $("result-reticle").classList.remove("show");
-    $("reticle-label").classList.remove("show");
-    lightConstellation(key, style);
-    placeReticle(style, anxiety, avoidance);
-
     $("result-tips").innerHTML =
       tipHTML("常見優點", style.strengths) +
       tipHTML("常見觸發", style.triggers) +
-      tipHTML("溝通建議", style.tip) +
+      tipHTML("溝通提示", style.tip) +
       tipHTML("成長方向", style.growth);
 
     window.__lastResultText = buildCopyText(style, anxiety, avoidance);
     window.__lastResultPayload = { anxiety: anxiety, avoidance: avoidance, key: key, style: style };
+
+    // Reset photo while generating
+    var img = $("result-photo");
+    var ph = $("result-photo-placeholder");
+    if (img) {
+      img.hidden = true;
+      img.removeAttribute("src");
+    }
+    if (ph) {
+      ph.hidden = false;
+      ph.textContent = "正在產生結果圖…";
+    }
+    var shareBtn = $("btn-share-story");
+    if (shareBtn) shareBtn.hidden = true;
+
     showScreen("result");
+    generateResultPhoto(window.__lastResultPayload);
+  }
+
+  function applyResultPhotoBlob(blob) {
+    var img = $("result-photo");
+    var ph = $("result-photo-placeholder");
+    if (!blob || !img) {
+      if (ph) ph.textContent = "結果圖產生失敗，請再測一次";
+      return;
+    }
+    if (__storyBlobUrl) {
+      try { URL.revokeObjectURL(__storyBlobUrl); } catch (e) {}
+    }
+    __storyBlob = blob;
+    __storyBlobUrl = URL.createObjectURL(blob);
+    img.src = __storyBlobUrl;
+    img.hidden = false;
+    if (ph) ph.hidden = true;
+
+    var shareBtn = $("btn-share-story");
+    try {
+      var file = new File([blob], "attachment-result.png", { type: "image/png" });
+      var canShare = !!(navigator.share && navigator.canShare && navigator.canShare({ files: [file] }));
+      window.__storyShareFile = file;
+      if (shareBtn) shareBtn.hidden = !canShare;
+    } catch (e) {
+      window.__storyShareFile = null;
+      if (shareBtn) shareBtn.hidden = true;
+    }
+  }
+
+  async function generateResultPhoto(payload) {
+    if (!payload) return;
+    try {
+      if (document.fonts && document.fonts.ready) {
+        await document.fonts.ready;
+      }
+      var canvas = ensureStoryCanvas();
+      drawStoryCard(payload);
+      canvas.toBlob(function (blob) {
+        applyResultPhotoBlob(blob);
+      }, "image/png");
+    } catch (err) {
+      var ph = $("result-photo-placeholder");
+      if (ph) {
+        ph.hidden = false;
+        ph.textContent = "結果圖產生失敗，請再測一次";
+      }
+    }
   }
 
   function tipHTML(title, body) {
@@ -1843,7 +1801,7 @@
       "",
       style.blurb,
       "",
-      "溝通建議：" + style.tip,
+      "溝通提示：" + style.tip,
       "成長方向：" + style.growth,
       "",
       "（並非臨床診斷；傾向可以改變。）"
@@ -2234,56 +2192,13 @@
     return canvas;
   }
 
-  var __storyBlobUrl = null;
-  var __storyBlob = null;
-
-  function closeStoryPreview() {
-    var modal = $("story-preview-modal");
-    if (modal) {
-      modal.classList.remove("open");
-      modal.hidden = true;
-    }
-    document.body.style.overflow = "";
-  }
-
-  function openStoryPreview(blob) {
-    var modal = $("story-preview-modal");
-    var img = $("story-preview-img");
-    var shareBtn = $("btn-share-story");
-    if (!modal || !img) return;
-
-    if (__storyBlobUrl) {
-      try { URL.revokeObjectURL(__storyBlobUrl); } catch (e) {}
-    }
-    __storyBlob = blob;
-    __storyBlobUrl = URL.createObjectURL(blob);
-    img.src = __storyBlobUrl;
-
-    var canShare = false;
-    try {
-      var file = new File([blob], "attachment-result.png", { type: "image/png" });
-      canShare = !!(navigator.share && navigator.canShare && navigator.canShare({ files: [file] }));
-      window.__storyShareFile = file;
-    } catch (e) {
-      canShare = false;
-      window.__storyShareFile = null;
-    }
-    if (shareBtn) {
-      shareBtn.hidden = !canShare;
-    }
-
-    modal.hidden = false;
-    modal.classList.add("open");
-    document.body.style.overflow = "hidden";
-  }
-
   function downloadStoryFallback() {
-    if (!__storyBlob && !__storyBlobUrl) {
-      showToast("請先顯示結果圖");
+    if (!__storyBlobUrl) {
+      showToast("結果圖尚未準備完成");
       return;
     }
     var a = document.createElement("a");
-    a.href = __storyBlobUrl || "";
+    a.href = __storyBlobUrl;
     a.download = "attachment-result.png";
     document.body.appendChild(a);
     a.click();
@@ -2306,37 +2221,6 @@
       if (err && err.name !== "AbortError") {
         showToast("分享未完成");
       }
-    }
-  }
-
-  async function showStoryPreview() {
-    var payload = window.__lastResultPayload;
-    if (!payload) {
-      showToast("尚無結果可顯示");
-      return;
-    }
-    var btn = $("btn-save-story");
-    if (btn) btn.disabled = true;
-    try {
-      if (document.fonts && document.fonts.ready) {
-        await document.fonts.ready;
-      }
-      var canvas = ensureStoryCanvas();
-      drawStoryCard(payload);
-      canvas.toBlob(function (blob) {
-        try {
-          if (!blob) {
-            showToast("產生圖片失敗，請再試一次");
-            return;
-          }
-          openStoryPreview(blob);
-        } finally {
-          if (btn) btn.disabled = false;
-        }
-      }, "image/png");
-    } catch (err) {
-      showToast("產生圖片失敗，請再試一次");
-      if (btn) btn.disabled = false;
     }
   }
 
@@ -2378,16 +2262,6 @@
   })();
 
   try {
-    var saveBtn = $("btn-save-story");
-    if (saveBtn) {
-      saveBtn.addEventListener("click", function () {
-        showStoryPreview();
-      });
-    }
-    var closeBtn = $("btn-close-preview");
-    if (closeBtn) {
-      closeBtn.addEventListener("click", closeStoryPreview);
-    }
     var shareBtn = $("btn-share-story");
     if (shareBtn) {
       shareBtn.addEventListener("click", function () {
@@ -2398,15 +2272,6 @@
     if (dlBtn) {
       dlBtn.addEventListener("click", downloadStoryFallback);
     }
-    var modal = $("story-preview-modal");
-    if (modal) {
-      modal.addEventListener("click", function (e) {
-        if (e.target === modal) closeStoryPreview();
-      });
-    }
-    document.addEventListener("keydown", function (e) {
-      if (e.key === "Escape") closeStoryPreview();
-    });
     ensureStoryCanvas();
   } catch (e) {
     /* save wiring must never block the quiz */
