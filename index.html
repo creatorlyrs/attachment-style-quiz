@@ -1,0 +1,2262 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="依戀型人格測驗 · 親密關係傾向 · 自我探索（教育用途）">
+<title>依戀型人格測驗</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Orbitron:wght@500;700&display=swap');
+
+  :root {
+    --bg0: #03050c;
+    --bg1: #080c18;
+    --panel: rgba(8, 12, 24, 0.72);
+    --panel-solid: rgba(12, 16, 28, 0.94);
+    --ink: #e8f4ff;
+    --ink-soft: #94a3b8;
+    --muted: #64748b;
+    --cyan: #22d3ee;
+    --cyan-soft: #67e8f9;
+    --violet: #a855f7;
+    --pink: #f472b6;
+    --pink-soft: #f9a8d4;
+    --green: #34d399;
+    --green-soft: #6ee7b7;
+    --amber: #fbbf24;
+    --amber-soft: #fcd34d;
+    --line: rgba(56, 189, 248, 0.28);
+    --line-soft: rgba(56, 189, 248, 0.16);
+    --font: 'Noto Sans TC', "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+    --mono: 'Orbitron', ui-monospace, monospace;
+    --radius: 4px;
+    --shadow: 0 0 60px rgba(56, 189, 248, 0.07), 0 24px 80px rgba(0, 0, 0, 0.45);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font);
+    color: var(--ink);
+    line-height: 1.65;
+    min-height: 100dvh;
+    -webkit-font-smoothing: antialiased;
+    background:
+      radial-gradient(ellipse 50% 40% at 50% 48%, rgba(56, 189, 248, 0.07), transparent 55%),
+      radial-gradient(ellipse 35% 30% at 18% 18%, rgba(168, 85, 247, 0.09), transparent 45%),
+      radial-gradient(ellipse 30% 28% at 85% 78%, rgba(244, 114, 182, 0.07), transparent 40%),
+      linear-gradient(180deg, var(--bg0) 0%, var(--bg1) 45%, #050810 100%);
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    background:
+      radial-gradient(1.5px 1.5px at 8% 14%, rgba(255,255,255,0.35), transparent),
+      radial-gradient(1px 1px at 15% 62%, rgba(103,232,249,0.3), transparent),
+      radial-gradient(1.5px 1.5px at 22% 38%, rgba(255,255,255,0.22), transparent),
+      radial-gradient(1px 1px at 31% 81%, rgba(196,181,253,0.28), transparent),
+      radial-gradient(1.2px 1.2px at 42% 12%, rgba(255,255,255,0.28), transparent),
+      radial-gradient(1px 1px at 55% 28%, rgba(249,168,212,0.3), transparent),
+      radial-gradient(1px 1px at 63% 72%, rgba(255,255,255,0.2), transparent),
+      radial-gradient(1.2px 1.2px at 71% 18%, rgba(103,232,249,0.28), transparent),
+      radial-gradient(1px 1px at 85% 85%, rgba(196,181,253,0.25), transparent),
+      radial-gradient(1px 1px at 92% 32%, rgba(255,255,255,0.25), transparent),
+      radial-gradient(1px 1px at 5% 88%, rgba(255,255,255,0.18), transparent),
+      repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(56,189,248,0.01) 3px, rgba(56,189,248,0.01) 4px);
+  }
+
+  .wrap {
+    position: relative;
+    z-index: 1;
+    width: min(720px, 100% - 1.5rem);
+    margin: 0 auto;
+    padding: 1.5rem 0 3.5rem;
+  }
+
+  .hidden { display: none !important; }
+
+  .visually-hidden {
+    position: absolute; width: 1px; height: 1px; overflow: hidden;
+    clip: rect(0,0,0,0); white-space: nowrap;
+  }
+
+  /* —— HUD frame —— */
+  .hud-frame {
+    position: relative;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.2rem 1.4rem;
+    background: var(--panel);
+    box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.1) inset, var(--shadow);
+    margin-bottom: 1rem;
+  }
+  .hud-frame::before, .hud-frame::after,
+  .hud-frame .c-tr, .hud-frame .c-bl {
+    content: '';
+    position: absolute;
+    width: 18px; height: 18px;
+    border-style: solid;
+    pointer-events: none;
+  }
+  .hud-frame::before {
+    top: -1px; left: -1px;
+    border-color: var(--cyan);
+    border-width: 2px 0 0 2px;
+  }
+  .hud-frame::after {
+    bottom: -1px; right: -1px;
+    border-color: var(--cyan);
+    border-width: 0 2px 2px 0;
+  }
+  .hud-frame .c-tr {
+    top: -1px; right: -1px;
+    border-color: var(--violet);
+    border-width: 2px 2px 0 0;
+  }
+  .hud-frame .c-bl {
+    bottom: -1px; left: -1px;
+    border-color: var(--violet);
+    border-width: 0 0 2px 2px;
+  }
+
+  .top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 0.75rem;
+    margin-bottom: 0.85rem;
+    flex-wrap: wrap;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    color: var(--cyan-soft);
+  }
+  .badge .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--cyan);
+    box-shadow: 0 0 12px var(--cyan);
+    flex-shrink: 0;
+  }
+
+  .chips {
+    display: flex;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+  .chip {
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.3rem 0.65rem;
+    border-radius: 2px;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+  .chip-ok {
+    color: var(--green-soft);
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(52, 211, 153, 0.45);
+    box-shadow: 0 0 12px rgba(52, 211, 153, 0.1);
+  }
+  .chip-scan {
+    color: var(--cyan-soft);
+    background: rgba(34, 211, 238, 0.1);
+    border: 1px solid rgba(34, 211, 238, 0.4);
+  }
+  .chip-lock {
+    color: #c4b5fd;
+    background: rgba(168, 85, 247, 0.1);
+    border: 1px solid rgba(168, 85, 247, 0.4);
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.08);
+  }
+  .chip-read {
+    color: #c4b5fd;
+    background: rgba(168, 85, 247, 0.12);
+    border: 1px solid rgba(168, 85, 247, 0.4);
+  }
+
+  h1 {
+    font-size: clamp(1.55rem, 5vw, 2rem);
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    line-height: 1.3;
+    margin-bottom: 0.4rem;
+    background: linear-gradient(90deg, #e0f2fe, #c4b5fd, #67e8f9);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .subtitle {
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+    margin-bottom: 0.35rem;
+  }
+
+  .disclaimer {
+    font-size: 0.78rem;
+    color: var(--muted);
+    line-height: 1.7;
+    margin: 0.85rem 0 0;
+  }
+  .disclaimer strong { color: var(--ink-soft); font-weight: 700; }
+
+  /* —— Starmap stage —— */
+  .stage {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 1 / 1.05;
+    max-height: 520px;
+    border-radius: var(--radius);
+    border: 1px solid var(--line-soft);
+    background: rgba(3, 6, 14, 0.72);
+    overflow: hidden;
+    margin-top: 0.75rem;
+  }
+  @media (min-width: 560px) {
+    .stage { aspect-ratio: 16 / 11; max-height: 440px; }
+  }
+
+  .atm { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+  .atm-tl {
+    position: absolute; left: 0; top: 0; width: 55%; height: 55%;
+    background: radial-gradient(ellipse 80% 80% at 25% 25%, rgba(244,114,182,0.12), transparent 70%);
+  }
+  .atm-tr {
+    position: absolute; right: 0; top: 0; width: 55%; height: 55%;
+    background: radial-gradient(ellipse 80% 80% at 75% 25%, rgba(168,85,247,0.09), transparent 70%);
+  }
+  .atm-bl {
+    position: absolute; left: 0; bottom: 0; width: 55%; height: 55%;
+    background: radial-gradient(ellipse 80% 80% at 25% 75%, rgba(52,211,153,0.08), transparent 70%);
+  }
+  .atm-br {
+    position: absolute; right: 0; bottom: 0; width: 55%; height: 55%;
+    background: radial-gradient(ellipse 80% 80% at 75% 75%, rgba(251,191,36,0.07), transparent 70%);
+  }
+
+  .dust {
+    position: absolute; inset: 0; pointer-events: none; z-index: 1;
+    background:
+      radial-gradient(1.5px 1.5px at 18% 22%, rgba(249,168,212,0.45), transparent),
+      radial-gradient(1px 1px at 35% 40%, rgba(103,232,249,0.35), transparent),
+      radial-gradient(1.2px 1.2px at 62% 30%, rgba(255,255,255,0.25), transparent),
+      radial-gradient(1px 1px at 75% 55%, rgba(196,181,253,0.3), transparent),
+      radial-gradient(1.5px 1.5px at 28% 68%, rgba(110,231,183,0.3), transparent),
+      radial-gradient(1px 1px at 82% 78%, rgba(252,211,77,0.25), transparent),
+      radial-gradient(1px 1px at 48% 18%, rgba(255,255,255,0.2), transparent),
+      radial-gradient(1.2px 1.2px at 55% 82%, rgba(103,232,249,0.25), transparent);
+  }
+
+  .radar {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(58%, 220px); height: min(58%, 220px);
+    border-radius: 50%;
+    border: 1px solid rgba(56,189,248,0.12);
+    z-index: 2;
+    opacity: 0.7;
+    pointer-events: none;
+  }
+  /* single soft inner ring only — less clutter */
+  .radar::after {
+    content: '';
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: 48%; height: 48%;
+    border-radius: 50%;
+    border: 1px solid rgba(168,85,247,0.1);
+  }
+
+  .beam-h, .beam-v {
+    position: absolute;
+    left: 50%; top: 50%;
+    z-index: 2;
+    opacity: 0.55;
+  }
+  .beam-h {
+    width: 78%; height: 1px;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(90deg, transparent, rgba(56,189,248,0.28), rgba(168,85,247,0.28), transparent);
+  }
+  .beam-v {
+    width: 1px; height: 78%;
+    transform: translate(-50%, -50%);
+    background: linear-gradient(180deg, transparent, rgba(56,189,248,0.28), rgba(168,85,247,0.28), transparent);
+  }
+
+  .axis-label {
+    position: absolute;
+    font-size: clamp(0.65rem, 2.2vw, 0.75rem);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 0.3rem 0.55rem;
+    border-radius: 2px;
+    background: rgba(8,12,24,0.92);
+    border: 1px solid;
+    white-space: nowrap;
+    z-index: 10;
+    writing-mode: horizontal-tb;
+  }
+  .ax-top {
+    top: 6px; left: 50%; transform: translateX(-50%);
+    color: var(--pink-soft); border-color: rgba(244,114,182,0.45);
+  }
+  .ax-bottom {
+    bottom: 6px; left: 50%; transform: translateX(-50%);
+    color: #7dd3fc; border-color: rgba(56,189,248,0.45);
+  }
+  .ax-left {
+    left: 6px; top: 50%; transform: translateY(-50%);
+    color: var(--green-soft); border-color: rgba(52,211,153,0.45);
+  }
+  .ax-right {
+    right: 6px; top: 50%; transform: translateY(-50%);
+    color: var(--amber-soft); border-color: rgba(251,191,36,0.45);
+  }
+
+  .links {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    pointer-events: none; z-index: 3;
+  }
+
+  .hub {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    text-align: center;
+    pointer-events: none;
+  }
+  .scan-ring {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 52px; height: 52px;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .scan-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .scan-ring .arc-anim {
+    transform-origin: 50% 50%;
+    animation: scanSpin 12s linear infinite;
+  }
+  @keyframes scanSpin {
+    to { transform: rotate(360deg); }
+  }
+  .hub .core {
+    width: 14px; height: 14px;
+    margin: 0 auto 4px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 40% 35%, rgba(103,232,249,0.85), rgba(14,165,233,0.45) 55%, rgba(30,27,75,0.9) 100%);
+    box-shadow: 0 0 10px rgba(56,189,248,0.28);
+    border: 1px solid rgba(103,232,249,0.35);
+    position: relative; z-index: 1;
+    animation: corePulse 4.5s ease-in-out infinite;
+  }
+  @keyframes corePulse {
+    0%, 100% { box-shadow: 0 0 8px rgba(56,189,248,0.22); opacity: 0.85; }
+    50% { box-shadow: 0 0 14px rgba(56,189,248,0.4); opacity: 1; }
+  }
+  .hub .txt {
+    font-size: 0.58rem; font-weight: 600; color: #64748b;
+    letter-spacing: 0.08em;
+  }
+  .hub .subtxt { display: none; }
+  .scan-pct { display: none; }
+
+  .star {
+    position: absolute;
+    width: min(38%, 138px);
+    z-index: 6;
+    writing-mode: horizontal-tb;
+    transition: opacity 0.35s, filter 0.35s;
+  }
+  .star.dim { opacity: 0.32; filter: saturate(0.45) brightness(0.7); }
+  .star.lit { opacity: 1; z-index: 8; }
+  .star.equal { opacity: 0.92; }
+
+  /* —— Intro: one-shot reveal + breathing glow relay —— */
+  #intro-stage.boot .star,
+  #intro-stage.boot .links,
+  #intro-stage.boot .beam-h,
+  #intro-stage.boot .beam-v,
+  #intro-stage.boot .axis-label,
+  #intro-stage.boot .radar,
+  #intro-stage.boot .atm,
+  #intro-stage.boot .dust {
+    opacity: 0;
+    pointer-events: none;
+  }
+  #intro-stage.boot .beam-h { transform: translate(-50%, -50%) scaleX(0.08); }
+  #intro-stage.boot .beam-v { transform: translate(-50%, -50%) scaleY(0.08); }
+  #intro-stage.boot .links line {
+    stroke-dasharray: 40;
+    stroke-dashoffset: 40;
+  }
+  #intro-stage.boot .hub { opacity: 1; }
+
+  #intro-stage .beam-h,
+  #intro-stage .beam-v,
+  #intro-stage .radar,
+  #intro-stage .atm,
+  #intro-stage .dust,
+  #intro-stage .axis-label,
+  #intro-stage .links {
+    transition: opacity 0.55s ease, transform 0.7s ease;
+  }
+  #intro-stage .links line {
+    transition: stroke-dashoffset 0.7s ease;
+  }
+  #intro-stage .star.equal {
+    opacity: 0;
+    transform: scale(0.92);
+    transition: opacity 0.45s ease, transform 0.5s ease, filter 0.35s;
+  }
+  #intro-stage.expanding .beam-h,
+  #intro-stage.expanding .beam-v,
+  #intro-stage.expanding .radar,
+  #intro-stage.expanding .atm,
+  #intro-stage.expanding .dust,
+  #intro-stage.expanding .axis-label,
+  #intro-stage.expanding .links {
+    opacity: 1;
+  }
+  #intro-stage.expanding .beam-h { transform: translate(-50%, -50%) scaleX(1); }
+  #intro-stage.expanding .beam-v { transform: translate(-50%, -50%) scaleY(1); }
+  #intro-stage.expanding .links line { stroke-dashoffset: 0; }
+
+  #intro-stage.revealed .star.equal {
+    opacity: 0.88;
+    transform: scale(1);
+  }
+  #intro-stage.revealed .s-anxious { transition-delay: 0.05s; }
+  #intro-stage.revealed .s-fearful { transition-delay: 0.22s; }
+  #intro-stage.revealed .s-secure { transition-delay: 0.38s; }
+  #intro-stage.revealed .s-avoidant { transition-delay: 0.52s; }
+
+  /* Breath relay: one node at a time, 8s loop (~2s each) */
+  #intro-stage.revealed.breathing .star.equal .orb {
+    animation: breathRelay 8s ease-in-out infinite;
+  }
+  #intro-stage.revealed.breathing .star.equal .panel {
+    animation: breathPanel 8s ease-in-out infinite;
+  }
+  #intro-stage.revealed.breathing .s-anxious .orb,
+  #intro-stage.revealed.breathing .s-anxious .panel { animation-delay: 0s; }
+  #intro-stage.revealed.breathing .s-fearful .orb,
+  #intro-stage.revealed.breathing .s-fearful .panel { animation-delay: -6s; }
+  #intro-stage.revealed.breathing .s-secure .orb,
+  #intro-stage.revealed.breathing .s-secure .panel { animation-delay: -4s; }
+  #intro-stage.revealed.breathing .s-avoidant .orb,
+  #intro-stage.revealed.breathing .s-avoidant .panel { animation-delay: -2s; }
+  @keyframes breathRelay {
+    0%, 18% { box-shadow: 0 0 8px var(--glow); transform: scale(1); }
+    6%, 12% { box-shadow: 0 0 16px var(--glow), 0 0 28px var(--glow); transform: scale(1.15); }
+    22%, 100% { box-shadow: 0 0 6px transparent; transform: scale(1); }
+  }
+  @keyframes breathPanel {
+    0%, 18% { border-color: rgba(148,163,184,0.2); box-shadow: none; }
+    6%, 12% {
+      border-color: var(--panel-lit, rgba(103,232,249,0.35));
+      box-shadow: 0 0 14px var(--glow-soft, rgba(56,189,248,0.12));
+    }
+    22%, 100% { border-color: rgba(148,163,184,0.18); box-shadow: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #intro-stage.boot .star,
+    #intro-stage.boot .links,
+    #intro-stage.boot .beam-h,
+    #intro-stage.boot .beam-v,
+    #intro-stage.boot .axis-label,
+    #intro-stage.boot .radar,
+    #intro-stage.boot .atm,
+    #intro-stage.boot .dust {
+      opacity: 1 !important;
+      pointer-events: auto;
+    }
+    #intro-stage.boot .beam-h { transform: translate(-50%, -50%) scaleX(1) !important; }
+    #intro-stage.boot .beam-v { transform: translate(-50%, -50%) scaleY(1) !important; }
+    #intro-stage .star.equal {
+      opacity: 0.92 !important;
+      transform: none !important;
+      transition: none !important;
+    }
+    #intro-stage .beam-h,
+    #intro-stage .beam-v,
+    #intro-stage .links line {
+      transition: none !important;
+    }
+    #intro-stage.revealed.breathing .star.equal .orb,
+    #intro-stage.revealed.breathing .star.equal .panel {
+      animation: none !important;
+    }
+    .scan-ring .arc-anim,
+    .hub .core,
+    #intro-stage .dust,
+    #result-stage .dust,
+    .reticle .ring {
+      animation: none !important;
+    }
+  }
+
+  .star .orb {
+    width: 9px; height: 9px;
+    border-radius: 50%;
+    margin: 0 auto 6px;
+    position: relative;
+    box-shadow: 0 0 10px var(--glow);
+    background: var(--core);
+  }
+  .star.lit .orb {
+    width: 11px; height: 11px;
+    box-shadow: 0 0 16px var(--glow), 0 0 28px var(--glow);
+  }
+  /* drop extra decorative ring that blocked text */
+  .star .orb::before { display: none; }
+
+  .star .panel {
+    padding: 0.5rem 0.55rem;
+    border-radius: 3px;
+    background: linear-gradient(145deg, rgba(15,23,42,0.96), rgba(8,12,24,0.94));
+    border: 1px solid rgba(148,163,184,0.2);
+    text-align: center;
+    position: relative;
+    z-index: 2;
+  }
+  .star.lit .panel {
+    border-color: var(--panel-lit, rgba(244,114,182,0.45));
+    box-shadow: 0 0 16px var(--glow-soft, rgba(244,114,182,0.14));
+  }
+  .star .code {
+    font-family: var(--mono);
+    font-size: 0.48rem; letter-spacing: 0.1em; color: var(--ac); margin-bottom: 2px;
+    opacity: 0.75;
+  }
+  .star h3 {
+    font-size: clamp(0.7rem, 2.4vw, 0.82rem);
+    font-weight: 900; color: #f1f5f9;
+    margin-bottom: 2px; letter-spacing: 0.03em;
+  }
+  .star p {
+    font-size: clamp(0.58rem, 1.9vw, 0.66rem);
+    line-height: 1.4; color: var(--ink-soft);
+  }
+  .star .locked-tag {
+    display: none;
+    margin-top: 5px;
+    font-size: 0.6rem; font-weight: 700;
+    color: var(--ac);
+    letter-spacing: 0.04em;
+    padding: 2px 6px;
+    border: 1px solid var(--ring);
+    border-radius: 2px;
+    background: rgba(255,255,255,0.04);
+  }
+  .star.lit .locked-tag { display: inline-block; }
+
+  /* pull nodes toward corners — clear of center & axis labels */
+  .s-anxious {
+    left: 2%; top: 11%;
+    --core: #f472b6; --glow: rgba(244,114,182,0.55); --ring: rgba(244,114,182,0.4);
+    --ac: #f9a8d4; --panel-lit: rgba(244,114,182,0.45); --glow-soft: rgba(244,114,182,0.15);
+  }
+  .s-fearful {
+    right: 2%; top: 11%; left: auto;
+    --core: #a855f7; --glow: rgba(168,85,247,0.45); --ring: rgba(168,85,247,0.35);
+    --ac: #c4b5fd; --panel-lit: rgba(168,85,247,0.45); --glow-soft: rgba(168,85,247,0.15);
+  }
+  .s-secure {
+    left: 2%; bottom: 11%; top: auto;
+    --core: #34d399; --glow: rgba(52,211,153,0.45); --ring: rgba(52,211,153,0.35);
+    --ac: #6ee7b7; --panel-lit: rgba(52,211,153,0.45); --glow-soft: rgba(52,211,153,0.15);
+  }
+  .s-avoidant {
+    right: 2%; bottom: 11%; top: auto; left: auto;
+    --core: #fbbf24; --glow: rgba(251,191,36,0.4); --ring: rgba(251,191,36,0.35);
+    --ac: #fcd34d; --panel-lit: rgba(251,191,36,0.4); --glow-soft: rgba(251,191,36,0.12);
+  }
+
+  /* soft result marker — gentle glow dot, no aggressive crosshair */
+  .reticle {
+    position: absolute;
+    width: 22px; height: 22px;
+    transform: translate(-50%, -50%);
+    z-index: 8;
+    pointer-events: none;
+    display: none;
+  }
+  .reticle.show { display: block; }
+  .reticle .cross-h, .reticle .cross-v { display: none; }
+  .reticle .ring {
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    border: 1px solid var(--ret-color, rgba(244,114,182,0.55));
+    box-shadow: 0 0 12px var(--ret-glow, rgba(244,114,182,0.35));
+    opacity: 0.85;
+    animation: softRing 3.2s ease-in-out infinite;
+  }
+  @keyframes softRing {
+    0%, 100% { transform: scale(1); opacity: 0.7; }
+    50% { transform: scale(1.12); opacity: 1; }
+  }
+  .reticle .ring-outer {
+    position: absolute; inset: -6px;
+    border-radius: 50%;
+    border: 1px dashed var(--ret-dash, rgba(249,168,212,0.35));
+    opacity: 0.55;
+  }
+  .reticle .dot {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 5px; height: 5px;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: 0 0 8px var(--ret-color, #f472b6);
+  }
+  .reticle-label {
+    position: absolute;
+    z-index: 8;
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    color: var(--ret-label, #f9a8d4);
+    padding: 2px 7px;
+    background: rgba(8,12,24,0.9);
+    border: 1px solid var(--ret-border, rgba(244,114,182,0.35));
+    border-radius: 2px;
+    white-space: nowrap;
+    display: none;
+    transform: translate(12px, -20px);
+  }
+  .reticle-label.show { display: block; }
+
+  /* particle drift on stages */
+  #intro-stage .dust, #result-stage .dust {
+    animation: dustDrift 28s linear infinite;
+  }
+  @keyframes dustDrift {
+    0% { transform: translate(0, 0); opacity: 0.85; }
+    50% { transform: translate(6px, -4px); opacity: 1; }
+    100% { transform: translate(0, 0); opacity: 0.85; }
+  }
+
+  /* Style cards under intro map */
+  .style-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.65rem;
+    margin-top: 1rem;
+  }
+  @media (max-width: 420px) {
+    .style-grid { grid-template-columns: 1fr; }
+  }
+  .style-card {
+    padding: 0.75rem 0.8rem;
+    border-radius: 3px;
+    background: rgba(3, 6, 14, 0.65);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    position: relative;
+  }
+  .style-card::before {
+    content: '';
+    position: absolute; inset: 0; border-radius: 3px; padding: 1px;
+    background: linear-gradient(135deg, var(--sc, rgba(56,189,248,0.35)), transparent 45%, rgba(168,85,247,0.2));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    pointer-events: none;
+  }
+  .style-card h3 {
+    font-size: 0.85rem; font-weight: 800; margin-bottom: 0.25rem;
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .style-card .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--sc); box-shadow: 0 0 8px var(--sc);
+    flex-shrink: 0;
+  }
+  .style-card p { font-size: 0.75rem; color: var(--ink-soft); line-height: 1.55; }
+  .sc-secure { --sc: #34d399; }
+  .sc-anxious { --sc: #f472b6; }
+  .sc-avoidant { --sc: #fbbf24; }
+  .sc-fearful { --sc: #a855f7; }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    font-family: var(--font);
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 0.75rem 1.35rem;
+    border-radius: 3px;
+    border: 1px solid rgba(34, 211, 238, 0.55);
+    background: linear-gradient(135deg, rgba(14,165,233,0.35), rgba(168,85,247,0.28));
+    color: #e0f2fe;
+    cursor: pointer;
+    box-shadow: 0 0 24px rgba(34, 211, 238, 0.15);
+    transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s;
+    width: 100%;
+  }
+  .btn:hover, .btn:focus-visible {
+    transform: translateY(-1px);
+    border-color: var(--cyan-soft);
+    box-shadow: 0 0 32px rgba(34, 211, 238, 0.28);
+    outline: none;
+  }
+  .btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  .btn-ghost {
+    background: rgba(8, 12, 24, 0.6);
+    border-color: rgba(148, 163, 184, 0.3);
+    color: var(--ink-soft);
+    box-shadow: none;
+  }
+  .btn-ghost:hover, .btn-ghost:focus-visible {
+    border-color: rgba(103, 232, 249, 0.45);
+    color: var(--ink);
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.1);
+  }
+  .btn-secondary {
+    background: rgba(15, 23, 42, 0.8);
+    border-color: rgba(168, 85, 247, 0.4);
+    color: #c4b5fd;
+    box-shadow: 0 0 16px rgba(168, 85, 247, 0.1);
+  }
+
+  .cta-block { margin-top: 1.15rem; }
+  .cta-meta {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 0.65rem;
+    font-family: var(--mono);
+    letter-spacing: 0.08em;
+  }
+
+  /* —— Quiz —— */
+  .progress-wrap { margin-bottom: 0.85rem; }
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.45rem;
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+  }
+  .progress-meta #progress-pct {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--cyan-soft);
+    letter-spacing: 0.08em;
+  }
+  .progress-bar {
+    height: 6px;
+    border-radius: 2px;
+    background: rgba(30, 41, 59, 0.9);
+    border: 1px solid rgba(71, 85, 105, 0.5);
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 1px;
+    background: linear-gradient(90deg, #0ea5e9, #a855f7 55%, #f472b6);
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.45);
+    transition: width 0.25s ease;
+  }
+
+  .q-card .scenario {
+    font-size: 1.02rem;
+    font-weight: 600;
+    line-height: 1.7;
+    color: #f1f5f9;
+    margin-bottom: 0.55rem;
+  }
+  .q-card .hint {
+    font-size: 0.78rem;
+    color: var(--muted);
+    margin-bottom: 1rem;
+  }
+
+  .likert {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+  .likert button {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    text-align: left;
+    font-family: var(--font);
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--ink-soft);
+    padding: 0.7rem 0.85rem;
+    border-radius: 3px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    background: rgba(3, 6, 14, 0.55);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s, color 0.15s, box-shadow 0.15s;
+  }
+  .likert button:hover, .likert button:focus-visible {
+    border-color: rgba(103, 232, 249, 0.45);
+    color: var(--ink);
+    outline: none;
+  }
+  .likert button.selected {
+    border-color: rgba(34, 211, 238, 0.65);
+    background: linear-gradient(135deg, rgba(14,165,233,0.2), rgba(168,85,247,0.15));
+    color: #e0f2fe;
+    box-shadow: 0 0 18px rgba(34, 211, 238, 0.15);
+  }
+  .likert .num {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--cyan-soft);
+    width: 1.4rem;
+    flex-shrink: 0;
+  }
+
+  .nav-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.65rem;
+    margin-top: 1rem;
+  }
+
+  /* —— Result —— */
+  .result-hero {
+    text-align: center;
+    padding: 0.5rem 0 0.85rem;
+    border-bottom: 1px solid rgba(56, 189, 248, 0.12);
+    margin-bottom: 0.9rem;
+  }
+  .result-kicker {
+    font-family: var(--mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    margin-bottom: 0.35rem;
+  }
+  .result-title {
+    font-size: clamp(1.4rem, 4.5vw, 1.75rem);
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.2rem;
+  }
+  .result-en {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    color: var(--ink-soft);
+    margin-bottom: 0.55rem;
+  }
+  .result-blurb {
+    font-size: 0.88rem;
+    color: var(--ink-soft);
+    line-height: 1.7;
+    max-width: 36em;
+    margin: 0 auto;
+  }
+  .theme-secure .result-title { color: var(--green-soft); text-shadow: 0 0 20px rgba(52,211,153,0.35); }
+  .theme-anxious .result-title { color: var(--pink-soft); text-shadow: 0 0 20px rgba(244,114,182,0.35); }
+  .theme-avoidant .result-title { color: var(--amber-soft); text-shadow: 0 0 20px rgba(251,191,36,0.3); }
+  .theme-fearful .result-title { color: #c4b5fd; text-shadow: 0 0 20px rgba(168,85,247,0.35); }
+
+  .hud-readouts {
+    margin-top: 0.9rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.65rem;
+  }
+  @media (max-width: 420px) {
+    .hud-readouts { grid-template-columns: 1fr; }
+  }
+  .meter {
+    padding: 0.85rem 0.9rem;
+    border-radius: 3px;
+    background: rgba(3, 6, 14, 0.7);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    position: relative;
+  }
+  .meter::before {
+    content: '';
+    position: absolute; inset: 0; border-radius: 3px; padding: 1px;
+    background: linear-gradient(135deg, rgba(56,189,248,0.35), transparent 40%, rgba(168,85,247,0.25));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    pointer-events: none;
+  }
+  .meter-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.55rem;
+    gap: 0.5rem;
+  }
+  .meter-title { font-size: 0.8rem; font-weight: 700; color: #e2e8f0; }
+  .meter-code {
+    font-family: var(--mono);
+    font-size: 0.5rem; color: var(--muted); letter-spacing: 0.1em;
+  }
+  .meter-val {
+    font-family: var(--mono);
+    font-size: 1.15rem; font-weight: 700; letter-spacing: 0.04em;
+  }
+  .meter-anx .meter-val { color: var(--pink-soft); text-shadow: 0 0 12px rgba(244,114,182,0.35); }
+  .meter-avo .meter-val { color: var(--green-soft); text-shadow: 0 0 12px rgba(52,211,153,0.3); }
+  .bar-track {
+    height: 7px;
+    border-radius: 2px;
+    background: rgba(30, 41, 59, 0.9);
+    border: 1px solid rgba(71, 85, 105, 0.5);
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    width: 0%;
+    border-radius: 1px;
+    transition: width 0.5s ease;
+  }
+  .meter-anx .bar-fill {
+    background: linear-gradient(90deg, #be185d, #f472b6 70%, #fbcfe8);
+    box-shadow: 0 0 10px rgba(244,114,182,0.45);
+  }
+  .meter-avo .bar-fill {
+    background: linear-gradient(90deg, #047857, #34d399 70%, #a7f3d0);
+    box-shadow: 0 0 10px rgba(52,211,153,0.4);
+  }
+  .bar-ticks {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.35rem;
+    font-size: 0.65rem;
+    color: var(--muted);
+  }
+  .meter-note {
+    margin-top: 0.35rem;
+    font-size: 0.7rem;
+    color: var(--ink-soft);
+  }
+
+  .tips {
+    margin-top: 0.9rem;
+    display: grid;
+    gap: 0.55rem;
+  }
+  .tip {
+    padding: 0.75rem 0.85rem;
+    border-radius: 3px;
+    background: rgba(3, 6, 14, 0.55);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+  }
+  .tip h4 {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: var(--cyan-soft);
+    margin-bottom: 0.3rem;
+  }
+  .tip p { font-size: 0.82rem; color: var(--ink-soft); line-height: 1.6; }
+
+  .btn-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.65rem;
+    margin-top: 1rem;
+  }
+
+  .btn-row-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.65rem;
+    margin-top: 1rem;
+  }
+  .btn-row-3 .btn-save-story {
+    grid-column: 1 / -1;
+  }
+  @media (max-width: 400px) {
+    .btn-row-3 { grid-template-columns: 1fr; }
+    .btn-row-3 .btn-save-story { grid-column: auto; }
+  }
+  #story-canvas {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    width: 1080px;
+    height: 1920px;
+    pointer-events: none;
+  }
+  .save-hint {
+    text-align: center;
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 0.45rem;
+  }
+
+  @media (max-width: 400px) {
+    .btn-row, .nav-row { grid-template-columns: 1fr; }
+  }
+
+  footer {
+    margin-top: 1.5rem;
+    font-size: 0.68rem;
+    color: var(--muted);
+    line-height: 1.7;
+    text-align: center;
+    padding: 0 0.5rem;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(120%);
+    z-index: 100;
+    padding: 0.65rem 1.1rem;
+    border-radius: 3px;
+    background: rgba(8, 12, 24, 0.95);
+    border: 1px solid rgba(34, 211, 238, 0.45);
+    color: var(--cyan-soft);
+    font-size: 0.85rem;
+    font-weight: 600;
+    box-shadow: 0 0 28px rgba(34, 211, 238, 0.2);
+    transition: transform 0.3s ease;
+    pointer-events: none;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  .map-caption {
+    font-size: 0.72rem;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 0.55rem;
+    letter-spacing: 0.02em;
+  }
+
+  .score-note {
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-top: 0.55rem;
+    line-height: 1.55;
+  }
+</style>
+</head>
+<body>
+  <div class="wrap">
+
+    <!-- ========== INTRO ========== -->
+    <section id="screen-intro" class="screen" aria-labelledby="main-title">
+      <div class="hud-frame">
+        <div class="c-tr"></div>
+        <div class="c-bl"></div>
+
+        <div class="top-row">
+          <div class="badge"><span class="dot"></span>ATTACHMENT · NEURAL STARMAP</div>
+          <div class="chips">
+            <span class="chip chip-ok">系統校準完成</span>
+            <span class="chip chip-scan">掃描待命</span>
+          </div>
+        </div>
+
+        <h1 id="main-title">依戀型人格測驗</h1>
+        <p class="subtitle">親密關係傾向 · 自我探索（教育用途）</p>
+        <p class="disclaimer">本測驗僅供自我探索，並非臨床診斷。</p>
+
+        <div class="stage boot" id="intro-stage" aria-label="焦慮與迴避兩軸神經星圖">
+          <div class="atm">
+            <div class="atm-tl"></div>
+            <div class="atm-tr"></div>
+            <div class="atm-bl"></div>
+            <div class="atm-br"></div>
+          </div>
+          <div class="dust"></div>
+          <div class="radar"></div>
+          <div class="beam-h"></div>
+          <div class="beam-v"></div>
+
+          <svg class="links" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="standbyLine" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.22"/>
+                <stop offset="100%" stop-color="#a855f7" stop-opacity="0.16"/>
+              </linearGradient>
+            </defs>
+            <line x1="50" y1="50" x2="22" y2="22" stroke="url(#standbyLine)" stroke-width="0.4" stroke-dasharray="1.2 1.8"/>
+            <line x1="50" y1="50" x2="78" y2="22" stroke="url(#standbyLine)" stroke-width="0.4" stroke-dasharray="1.2 1.8"/>
+            <line x1="50" y1="50" x2="22" y2="78" stroke="url(#standbyLine)" stroke-width="0.4" stroke-dasharray="1.2 1.8"/>
+            <line x1="50" y1="50" x2="78" y2="78" stroke="url(#standbyLine)" stroke-width="0.4" stroke-dasharray="1.2 1.8"/>
+          </svg>
+
+          <div class="axis-label ax-top">焦慮偏高</div>
+          <div class="axis-label ax-bottom">焦慮偏低</div>
+          <div class="axis-label ax-left">迴避偏低</div>
+          <div class="axis-label ax-right">迴避偏高</div>
+
+          <div class="hub">
+            <div class="scan-ring">
+              <svg viewBox="0 0 100 100" aria-hidden="true">
+                <defs>
+                  <linearGradient id="scanGradIntro" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#22d3ee"/>
+                    <stop offset="55%" stop-color="#a855f7"/>
+                    <stop offset="100%" stop-color="#f472b6"/>
+                  </linearGradient>
+                </defs>
+                <circle cx="50" cy="50" r="44" fill="none" stroke="rgba(56,189,248,0.1)" stroke-width="2"/>
+                <g class="arc-anim">
+                  <circle cx="50" cy="50" r="44" fill="none" stroke="url(#scanGradIntro)" stroke-width="2.5"
+                    stroke-linecap="round" stroke-dasharray="55 276" stroke-dashoffset="0"/>
+                </g>
+              </svg>
+            </div>
+            <div class="core"></div>
+            <div class="txt">關係自我</div>
+          </div>
+
+          <div class="star s-anxious equal" data-reveal="0">
+            <div class="orb"></div>
+            <div class="panel">
+              <div class="code">CONST · A01</div>
+              <h3>焦慮／沉迷型</h3>
+              <p>渴望親密，並常尋求確認。</p>
+            </div>
+          </div>
+          <div class="star s-fearful equal" data-reveal="1">
+            <div class="orb"></div>
+            <div class="panel">
+              <div class="code">CONST · F01</div>
+              <h3>恐懼／矛盾型</h3>
+              <p>想靠近又怕受傷，來回擺盪。</p>
+            </div>
+          </div>
+          <div class="star s-secure equal" data-reveal="2">
+            <div class="orb"></div>
+            <div class="panel">
+              <div class="code">CONST · S01</div>
+              <h3>安全型</h3>
+              <p>親密與自主皆可平衡。</p>
+            </div>
+          </div>
+          <div class="star s-avoidant equal" data-reveal="3">
+            <div class="orb"></div>
+            <div class="panel">
+              <div class="code">CONST · V01</div>
+              <h3>迴避／輕視型</h3>
+              <p>重視獨立，壓力時傾向退開。</p>
+            </div>
+          </div>
+        </div>
+        <p class="map-caption">縱軸：焦慮（害怕被忽視）　橫軸：迴避（害怕過度親密）</p>
+
+        <div class="style-grid" aria-label="四種傾向簡介">
+          <article class="style-card sc-secure">
+            <h3><span class="dot" aria-hidden="true"></span>安全型</h3>
+            <p>親近與獨立皆感自在；溝通相對直接，信任感較穩定。</p>
+          </article>
+          <article class="style-card sc-anxious">
+            <h3><span class="dot" aria-hidden="true"></span>焦慮／沉迷型</h3>
+            <p>高度重視連結；距離一出現便容易擔心，並需要確認。</p>
+          </article>
+          <article class="style-card sc-avoidant">
+            <h3><span class="dot" aria-hidden="true"></span>迴避／輕視型</h3>
+            <p>重視自主與界線；壓力大時傾向自行處理、拉開距離。</p>
+          </article>
+          <article class="style-card sc-fearful">
+            <h3><span class="dot" aria-hidden="true"></span>恐懼／矛盾型</h3>
+            <p>渴望親密又害怕受傷；靠近與退開會交替出現。</p>
+          </article>
+        </div>
+
+        <p class="disclaimer" style="margin-top:1rem;">
+          本測驗僅供自我探索與教育用途，<strong>並非臨床診斷</strong>。依戀傾向可隨經驗、關係品質與反思逐漸改變。若你目前感到十分辛苦，建議尋求可信之人或專業支援。
+        </p>
+
+        <div class="cta-block">
+          <button type="button" class="btn" id="btn-start">開始測驗</button>
+          <p class="cta-meta">12 題情境題 · 約 3–5 分鐘</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== QUIZ ========== -->
+    <section id="screen-quiz" class="screen hidden" aria-labelledby="quiz-heading">
+      <h2 id="quiz-heading" class="visually-hidden">測驗題目</h2>
+      <div class="hud-frame">
+        <div class="c-tr"></div>
+        <div class="c-bl"></div>
+
+        <div class="top-row">
+          <div class="badge"><span class="dot"></span>PROTOCOL · READ SEQUENCE</div>
+          <div class="chips">
+            <span class="chip chip-ok">系統校準完成</span>
+            <span class="chip chip-read" id="quiz-chip">讀取中</span>
+          </div>
+        </div>
+
+        <div class="progress-wrap">
+          <div class="progress-meta">
+            <span id="progress-text">第 1 / 12 題</span>
+            <span id="progress-pct">0%</span>
+          </div>
+          <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress-bar">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+        </div>
+
+        <div class="q-card">
+          <p class="scenario" id="q-text"></p>
+          <p class="hint">請選擇最接近你平時感受的選項（無需追求完美答案）。鍵盤可按 1–5 作答。</p>
+          <div class="likert" id="likert" role="group" aria-label="同意程度"></div>
+        </div>
+
+        <div class="nav-row">
+          <button type="button" class="btn btn-ghost" id="btn-prev">上一題</button>
+          <button type="button" class="btn" id="btn-next" disabled>下一題</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== RESULT ========== -->
+    <section id="screen-result" class="screen hidden" aria-labelledby="result-title">
+      <div class="hud-frame" id="result-card">
+        <div class="c-tr"></div>
+        <div class="c-bl"></div>
+
+        <div class="top-row">
+          <div class="badge"><span class="dot"></span>RESULT · TENDENCY MAP</div>
+          <div class="chips">
+            <span class="chip chip-ok">系統校準完成</span>
+            <span class="chip chip-lock">讀取完成</span>
+          </div>
+        </div>
+
+        <div class="result-hero" id="result-hero">
+          <p class="result-kicker">讀取完成 · 目前傾向</p>
+          <h2 class="result-title" id="result-title">—</h2>
+          <p class="result-en" id="result-en"></p>
+          <p class="result-blurb" id="result-blurb"></p>
+        </div>
+
+        <div class="stage" id="result-stage" aria-label="結果神經星圖">
+          <div class="atm">
+            <div class="atm-tl"></div>
+            <div class="atm-tr"></div>
+            <div class="atm-bl"></div>
+            <div class="atm-br"></div>
+          </div>
+          <div class="dust"></div>
+          <div class="radar"></div>
+          <div class="beam-h"></div>
+          <div class="beam-v"></div>
+
+          <svg class="links" id="result-links" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <defs>
+              <linearGradient id="litLine" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.45"/>
+                <stop offset="100%" stop-color="#f472b6" stop-opacity="0.55" id="litLineEnd"/>
+              </linearGradient>
+              <linearGradient id="dimLineR" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.1"/>
+                <stop offset="100%" stop-color="#a855f7" stop-opacity="0.07"/>
+              </linearGradient>
+              <filter id="glowLine" x="-30%" y="-30%" width="160%" height="160%">
+                <feGaussianBlur stdDeviation="0.8" result="b"/>
+                <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+            <line id="link-anxious"  data-key="anxious"  x1="50" y1="50" x2="22" y2="22" stroke="url(#dimLineR)" stroke-width="0.35" stroke-dasharray="1.2 1.8"/>
+            <line id="link-fearful"  data-key="fearful"  x1="50" y1="50" x2="78" y2="22" stroke="url(#dimLineR)" stroke-width="0.35" stroke-dasharray="1.2 1.8"/>
+            <line id="link-secure"   data-key="secure"   x1="50" y1="50" x2="22" y2="78" stroke="url(#dimLineR)" stroke-width="0.35" stroke-dasharray="1.2 1.8"/>
+            <line id="link-avoidant" data-key="avoidant" x1="50" y1="50" x2="78" y2="78" stroke="url(#dimLineR)" stroke-width="0.35" stroke-dasharray="1.2 1.8"/>
+          </svg>
+
+          <div class="axis-label ax-top">焦慮偏高</div>
+          <div class="axis-label ax-bottom">焦慮偏低</div>
+          <div class="axis-label ax-left">迴避偏低</div>
+          <div class="axis-label ax-right">迴避偏高</div>
+
+          <div class="hub">
+            <div class="scan-ring">
+              <svg viewBox="0 0 100 100" aria-hidden="true">
+                <defs>
+                  <linearGradient id="scanGradResult" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stop-color="#22d3ee"/>
+                    <stop offset="55%" stop-color="#a855f7"/>
+                    <stop offset="100%" stop-color="#f472b6"/>
+                  </linearGradient>
+                </defs>
+                <circle cx="50" cy="50" r="44" fill="none" stroke="rgba(56,189,248,0.1)" stroke-width="2"/>
+                <circle cx="50" cy="50" r="44" fill="none" stroke="url(#scanGradResult)" stroke-width="2.5"
+                  stroke-linecap="round" stroke-dasharray="200 276" stroke-dashoffset="0" opacity="0.7"/>
+              </svg>
+            </div>
+            <div class="core"></div>
+            <div class="txt">關係自我</div>
+          </div>
+
+          <div class="star s-anxious" data-star="anxious">
+            <div class="orb"></div>
+            <div class="panel">
+              <div class="code">CONST · A01</div>
+              <h3>焦慮／沉迷型</h3>
+              <p>渴望親密，並常尋求確認。</p>
+              <span class="locked-tag">傾向落點</span>
+            </div>
+          </div>
+          <div class="star s-fearful" data-star="fearful">
+            <div class="orb"></div>
+            <div class="panel">
+              <div class="code">CONST · F01</div>
+              <h3>恐懼／矛盾型</h3>
+              <p>想靠近又怕受傷，來回擺盪。</p>
+              <span class="locked-tag">傾向落點</span>
+            </div>
+          </div>
+          <div class="star s-secure" data-star="secure">
+            <div class="orb"></div>
+            <div class="panel">
+              <div class="code">CONST · S01</div>
+              <h3>安全型</h3>
+              <p>親密與自主皆可平衡。</p>
+              <span class="locked-tag">傾向落點</span>
+            </div>
+          </div>
+          <div class="star s-avoidant" data-star="avoidant">
+            <div class="orb"></div>
+            <div class="panel">
+              <div class="code">CONST · V01</div>
+              <h3>迴避／輕視型</h3>
+              <p>重視獨立，壓力時傾向退開。</p>
+              <span class="locked-tag">傾向落點</span>
+            </div>
+          </div>
+
+          <div class="reticle" id="result-reticle" aria-hidden="true">
+            <div class="ring-outer"></div>
+            <div class="ring"></div>
+            <div class="cross-h"></div>
+            <div class="cross-v"></div>
+            <div class="dot"></div>
+          </div>
+          <div class="reticle-label" id="reticle-label">傾向落點</div>
+        </div>
+
+        <div class="hud-readouts">
+          <div class="meter meter-anx">
+            <div class="meter-head">
+              <div>
+                <div class="meter-title">焦慮軸讀數</div>
+                <div class="meter-code">AXIS · ANXIETY</div>
+              </div>
+              <div class="meter-val" id="score-anx-val">—</div>
+            </div>
+            <div class="bar-track"><div class="bar-fill" id="score-anx-bar"></div></div>
+            <div class="bar-ticks"><span>1.0</span><span id="anx-level">—</span><span>5.0</span></div>
+            <div class="meter-note" id="anx-note"></div>
+          </div>
+          <div class="meter meter-avo">
+            <div class="meter-head">
+              <div>
+                <div class="meter-title">迴避軸讀數</div>
+                <div class="meter-code">AXIS · AVOIDANCE</div>
+              </div>
+              <div class="meter-val" id="score-avo-val">—</div>
+            </div>
+            <div class="bar-track"><div class="bar-fill" id="score-avo-bar"></div></div>
+            <div class="bar-ticks"><span>1.0</span><span id="avo-level">—</span><span>5.0</span></div>
+            <div class="meter-note" id="avo-note"></div>
+          </div>
+        </div>
+        <p class="score-note">分數範圍 1–5；中線 3.0（高於為偏高，低於或等於為偏低）。此為產品簡化分界，並非正式臨床量表。傾向不等於永久標籤。</p>
+
+        <div class="tips" id="result-tips"></div>
+      </div>
+
+      <div class="btn-row btn-row-3">
+        <button type="button" class="btn btn-secondary" id="btn-retry">再測一次</button>
+        <button type="button" class="btn btn-ghost" id="btn-copy">複製結果</button>
+        <button type="button" class="btn btn-save-story" id="btn-save-story">儲存結果圖</button>
+      </div>
+      <p class="save-hint">下載 1080×1920 PNG，可直接用於 IG Story</p>
+      <canvas id="story-canvas" width="1080" height="1920" aria-hidden="true"></canvas>
+
+      <p class="disclaimer" style="margin-top:1.1rem;text-align:center;">
+        結果僅供自我探索，<strong>並非臨床診斷</strong>。同一人在不同關係、不同時期也可能呈現不同傾向。
+      </p>
+    </section>
+
+    <footer>
+      框架靈感來自成人依戀研究常用的 Experiences in Close Relationships（ECR／ECR-R，約 36 題；短版 ECR-S 約 12 題）焦慮與迴避兩軸模型。本頁題目為原創情境改寫，並非正式量表複本，亦不作臨床用途。
+    </footer>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/**
+ * Attachment-style quiz — educational only, not a clinical instrument.
+ * Scoring inspired by ECR / ECR-S (Anxiety + Avoidance). Original scenario stems.
+ * Reverse-scored items: contribution = 6 - answer.
+ */
+(function () {
+  "use strict";
+
+  const LIKERT = [
+    { v: 1, label: "非常不同意" },
+    { v: 2, label: "不同意" },
+    { v: 3, label: "普通" },
+    { v: 4, label: "同意" },
+    { v: 5, label: "非常同意" }
+  ];
+
+  const QUESTIONS = [
+    {
+      id: 1, axis: "anxiety", reverse: false,
+      text: "對方已讀訊息半日仍未回覆，你的腦海會自動浮現「是否得罪對方／是否不想理會我」等念頭。"
+    },
+    {
+      id: 2, axis: "avoidance", reverse: false,
+      text: "伴侶希望連續傾談數小時心事，你內心第一反應是：「能否改日再談／我需要獨處一陣子」。"
+    },
+    {
+      id: 3, axis: "anxiety", reverse: false,
+      text: "關係稍顯冷淡（減少晚安、減少主動邀約）時，你會急於尋找方法確認「我們是否仍好」。"
+    },
+    {
+      id: 4, axis: "avoidance", reverse: false,
+      text: "壓力極大時，你寧願自行消化，也不希望伴侶一見到你就追問「發生了什麼事」。"
+    },
+    {
+      id: 5, axis: "anxiety", reverse: false,
+      text: "見到伴侶與朋友玩得開心，你會隱隱覺得自己被晾在一旁，即使理智告訴你「無關緊要」。"
+    },
+    {
+      id: 6, axis: "avoidance", reverse: false,
+      text: "談完一輪親密且動人的對話之後，你反而想拉開少許距離，感覺「太靠近似乎有些不自在」。"
+    },
+    {
+      id: 7, axis: "anxiety", reverse: false,
+      text: "做錯一件小事（遲到、語氣不佳）後，你會擔心這次將成為關係的轉折點，甚至害怕對方不再那麼愛你。"
+    },
+    {
+      id: 8, axis: "avoidance", reverse: false,
+      text: "聽到「我需要你」這句話，你內心會感到緊繃——彷彿自己的空間與自主忽然被收窄。"
+    },
+    {
+      id: 9, axis: "anxiety", reverse: true,
+      text: "即使對方忙碌數日、聯絡減少，你大多仍相信「我們沒有問題」，不必一路刷新手機確認。"
+    },
+    {
+      id: 10, axis: "avoidance", reverse: false,
+      text: "分享過深的過去或脆弱一面，會令你覺得自己「曝光過度」，寧願保留一些給自己。"
+    },
+    {
+      id: 11, axis: "anxiety", reverse: false,
+      text: "爭執之後對方需要冷靜空間，你會難以忍受——腦海不斷重播，想立刻把事情說清楚才安心。"
+    },
+    {
+      id: 12, axis: "avoidance", reverse: true,
+      text: "心情低落時，你自然會想找伴侶傾訴，覺得有人陪伴會較舒服，而不是第一時間關閉聯繫、獨自消化。"
+    }
+  ];
+
+  const STYLES = {
+    secure: {
+      key: "secure",
+      zh: "安全型",
+      en: "Secure",
+      code: "S01",
+      blurb: "你傾向在親密與自主之間取得平衡：可以靠近，也能給予對方與自己空間。溝通相對直接，無需時常揣測。",
+      strengths: "信任感較穩定；衝突時較易清楚表達需要，而不是只靠暗示或突然消失。",
+      triggers: "遇到極度忽冷忽熱、溝通斷層的對象時，可能會暫時失去節奏。",
+      tip: "繼續用「我覺得／我需要」表達感受，同時尊重對方節奏。",
+      growth: "留意自己是否過度合理化對方的冷淡——安全並不代表必須忍受長期忽視。",
+      retColor: "rgba(52,211,153,0.9)",
+      retGlow: "rgba(52,211,153,0.5)",
+      retDash: "rgba(110,231,183,0.55)",
+      retLabel: "#6ee7b7",
+      retBorder: "rgba(52,211,153,0.45)",
+      litEnd: "#34d399",
+      pos: { left: "24%", top: "72%" }
+    },
+    anxious: {
+      key: "anxious",
+      zh: "焦慮／沉迷型",
+      en: "Anxious-preoccupied",
+      code: "A01",
+      blurb: "你非常重視連結，距離一出現便容易啟動警報。渴望被確認並不可恥——只是警報有時會大於現實。",
+      strengths: "關係投入度高；敏銳察覺對方情緒變化，願意為關係付出。",
+      triggers: "已讀不回、語氣變淡、對方突然「需要空間」——都容易觸發追尋與確認。",
+      tip: "想確認之前，先停十分鐘問自己：這是事實，還是恐懼帶來的念頭？",
+      growth: "練習自我安撫：一個穩定習慣（散步、寫下擔憂）可以減少即時追問。",
+      retColor: "rgba(244,114,182,0.9)",
+      retGlow: "rgba(244,114,182,0.5)",
+      retDash: "rgba(249,168,212,0.55)",
+      retLabel: "#f9a8d4",
+      retBorder: "rgba(244,114,182,0.45)",
+      litEnd: "#f472b6",
+      pos: { left: "24%", top: "28%" }
+    },
+    avoidant: {
+      key: "avoidant",
+      zh: "迴避／輕視型",
+      en: "Dismissive-avoidant",
+      code: "V01",
+      blurb: "你珍惜自主與內在空間；過於親密、過於密集的情緒要求，容易令你想退後重整。獨立是優點，退開有時也會令對方誤解。",
+      strengths: "自我調節力強；不易被關係情緒完全捲走；重視界線。",
+      triggers: "被要求立刻剖白、被過度黏附、感覺「自由被收窄」時，最易關閉對話。",
+      tip: "退開之前先說一句：「我需要兩小時靜一靜，之後會回來談」——空間與承諾一併給予。",
+      growth: "試在安全範圍內多分享約一成感受；親密並不等於失去自己。",
+      retColor: "rgba(251,191,36,0.9)",
+      retGlow: "rgba(251,191,36,0.45)",
+      retDash: "rgba(252,211,77,0.55)",
+      retLabel: "#fcd34d",
+      retBorder: "rgba(251,191,36,0.45)",
+      litEnd: "#fbbf24",
+      pos: { left: "76%", top: "72%" }
+    },
+    fearful: {
+      key: "fearful",
+      zh: "恐懼／矛盾型",
+      en: "Fearful-avoidant",
+      code: "F01",
+      blurb: "你想要親密，又害怕親密會帶來傷害。靠近與推開可能交替出現——內在彷彿有兩套系統同時運作。",
+      strengths: "對風險與邊界有深度覺察；一旦建立信任，可以十分真誠。",
+      triggers: "關係加速、突然親密，或衝突之後的沉默——都可能同時觸發「想追」與「想逃」。",
+      tip: "採用慢節奏：約好下一次傾談的時間，減少當場「全部說完或全部不說」。",
+      growth: "分清「真正危險」與「舊傷口警報」；可信的關係值得你慢慢練習停留。",
+      retColor: "rgba(168,85,247,0.9)",
+      retGlow: "rgba(168,85,247,0.5)",
+      retDash: "rgba(196,181,253,0.55)",
+      retLabel: "#c4b5fd",
+      retBorder: "rgba(168,85,247,0.45)",
+      litEnd: "#a855f7",
+      pos: { left: "76%", top: "28%" }
+    }
+  };
+
+  const answers = new Array(QUESTIONS.length).fill(null);
+  let current = 0;
+
+  const $ = (id) => document.getElementById(id);
+  const screens = {
+    intro: $("screen-intro"),
+    quiz: $("screen-quiz"),
+    result: $("screen-result")
+  };
+
+  function showScreen(name) {
+    Object.keys(screens).forEach((k) => {
+      screens[k].classList.toggle("hidden", k !== name);
+    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function scoreValue(qIndex, raw) {
+    const q = QUESTIONS[qIndex];
+    return q.reverse ? 6 - raw : raw;
+  }
+
+  function computeScores() {
+    let anxSum = 0, anxN = 0, avoSum = 0, avoN = 0;
+    QUESTIONS.forEach((q, i) => {
+      const raw = answers[i];
+      if (raw == null) return;
+      const s = scoreValue(i, raw);
+      if (q.axis === "anxiety") { anxSum += s; anxN++; }
+      else { avoSum += s; avoN++; }
+    });
+    const anxiety = anxN ? anxSum / anxN : 0;
+    const avoidance = avoN ? avoSum / avoN : 0;
+    const highAnx = anxiety > 3;
+    const highAvo = avoidance > 3;
+    let key;
+    if (!highAnx && !highAvo) key = "secure";
+    else if (highAnx && !highAvo) key = "anxious";
+    else if (!highAnx && highAvo) key = "avoidant";
+    else key = "fearful";
+    return { anxiety, avoidance, key, style: STYLES[key] };
+  }
+
+  function renderQuestion() {
+    const q = QUESTIONS[current];
+    const total = QUESTIONS.length;
+    const answered = answers.filter((a) => a != null).length;
+    const fillPct = Math.round((answered / total) * 100);
+
+    $("progress-text").textContent = "第 " + (current + 1) + " / " + total + " 題";
+    $("progress-pct").textContent = fillPct + "%";
+    $("progress-fill").style.width = fillPct + "%";
+    $("progress-bar").setAttribute("aria-valuenow", fillPct);
+    $("quiz-chip").textContent = answered === total ? "讀取完成" : "讀取中";
+
+    $("q-text").textContent = q.text;
+
+    const box = $("likert");
+    box.innerHTML = "";
+    LIKERT.forEach((opt) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.setAttribute("aria-pressed", answers[current] === opt.v ? "true" : "false");
+      if (answers[current] === opt.v) btn.classList.add("selected");
+      btn.innerHTML = '<span class="num">' + opt.v + "</span><span>" + opt.label + "</span>";
+      btn.addEventListener("click", () => {
+        answers[current] = opt.v;
+        renderQuestion();
+        setTimeout(() => {
+          if (current < QUESTIONS.length - 1) {
+            current++;
+            renderQuestion();
+          } else {
+            $("btn-next").disabled = false;
+            $("btn-next").textContent = "查看結果";
+          }
+        }, 180);
+      });
+      box.appendChild(btn);
+    });
+
+    $("btn-prev").disabled = current === 0;
+    const isLast = current === QUESTIONS.length - 1;
+    $("btn-next").textContent = isLast ? "查看結果" : "下一題";
+    $("btn-next").disabled = answers[current] == null;
+  }
+
+  function placeReticle(style, anxiety, avoidance) {
+    const ret = $("result-reticle");
+    const label = $("reticle-label");
+    // Map 1–5 onto stage: left/right avoid, top/bottom anxiety (high anx = top)
+    const padL = 18, padR = 18, padT = 20, padB = 20;
+    const xPct = padL + ((avoidance - 1) / 4) * (100 - padL - padR);
+    const yPct = padT + ((5 - anxiety) / 4) * (100 - padT - padB);
+
+    ret.style.left = xPct + "%";
+    ret.style.top = yPct + "%";
+    ret.style.setProperty("--ret-color", style.retColor);
+    ret.style.setProperty("--ret-glow", style.retGlow);
+    ret.style.setProperty("--ret-dash", style.retDash);
+    ret.classList.add("show");
+
+    label.style.left = xPct + "%";
+    label.style.top = yPct + "%";
+    label.style.setProperty("--ret-label", style.retLabel);
+    label.style.setProperty("--ret-border", style.retBorder);
+    label.textContent = "傾向落點 · " + style.code;
+    label.classList.add("show");
+  }
+
+  function lightConstellation(key, style) {
+    document.querySelectorAll("#result-stage .star").forEach((el) => {
+      const k = el.getAttribute("data-star");
+      el.classList.toggle("lit", k === key);
+      el.classList.toggle("dim", k !== key);
+    });
+
+    const endStop = document.getElementById("litLineEnd");
+    if (endStop) endStop.setAttribute("stop-color", style.litEnd);
+
+    ["anxious", "fearful", "secure", "avoidant"].forEach((k) => {
+      const line = document.getElementById("link-" + k);
+      if (!line) return;
+      if (k === key) {
+        line.setAttribute("stroke", "url(#litLine)");
+        line.setAttribute("stroke-width", "0.45");
+        line.setAttribute("stroke-dasharray", "1.5 2.2");
+        line.setAttribute("opacity", "0.85");
+        line.removeAttribute("filter");
+      } else {
+        line.setAttribute("stroke", "url(#dimLineR)");
+        line.setAttribute("stroke-width", "0.28");
+        line.setAttribute("stroke-dasharray", "1.2 1.8");
+        line.setAttribute("opacity", "0.45");
+        line.removeAttribute("filter");
+      }
+    });
+  }
+
+  function renderResult() {
+    const { anxiety, avoidance, key, style } = computeScores();
+    const hero = $("result-hero");
+    hero.className = "result-hero theme-" + key;
+
+    $("result-title").textContent = style.zh;
+    $("result-en").textContent = style.en;
+    $("result-blurb").textContent = style.blurb;
+
+    const anxHigh = anxiety > 3;
+    const avoHigh = avoidance > 3;
+    $("score-anx-val").textContent = anxiety.toFixed(1);
+    $("score-avo-val").textContent = avoidance.toFixed(1);
+    $("anx-level").textContent = anxHigh ? "偏高" : "偏低";
+    $("avo-level").textContent = avoHigh ? "偏高" : "偏低";
+    $("score-anx-bar").style.width = (((anxiety - 1) / 4) * 100) + "%";
+    $("score-avo-bar").style.width = (((avoidance - 1) / 4) * 100) + "%";
+    $("anx-note").textContent = anxHigh ? "焦慮偏高（較易渴求確認）" : "焦慮偏低（距離較不易觸發警報）";
+    $("avo-note").textContent = avoHigh ? "迴避偏高（較易拉開距離）" : "迴避偏低（較不抗拒親密）";
+
+    $("result-reticle").classList.remove("show");
+    $("reticle-label").classList.remove("show");
+    lightConstellation(key, style);
+    placeReticle(style, anxiety, avoidance);
+
+    $("result-tips").innerHTML =
+      tipHTML("常見優點", style.strengths) +
+      tipHTML("常見觸發", style.triggers) +
+      tipHTML("溝通建議", style.tip) +
+      tipHTML("成長方向", style.growth);
+
+    window.__lastResultText = buildCopyText(style, anxiety, avoidance);
+    window.__lastResultPayload = { anxiety: anxiety, avoidance: avoidance, key: key, style: style };
+    showScreen("result");
+  }
+
+  function tipHTML(title, body) {
+    return '<div class="tip"><h4>' + title + "</h4><p>" + body + "</p></div>";
+  }
+
+  function buildCopyText(style, anxiety, avoidance) {
+    return [
+      "【依戀型人格測驗 · 教育用途】",
+      "傾向：" + style.zh + "（" + style.en + "）",
+      "焦慮：" + anxiety.toFixed(2) + "　迴避：" + avoidance.toFixed(2),
+      "",
+      style.blurb,
+      "",
+      "溝通建議：" + style.tip,
+      "成長方向：" + style.growth,
+      "",
+      "（並非臨床診斷；傾向可以改變。）"
+    ].join("\n");
+  }
+
+  function showToast(msg) {
+    const t = $("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    setTimeout(() => t.classList.remove("show"), 1800);
+  }
+
+  $("btn-start").addEventListener("click", () => {
+    current = 0;
+    answers.fill(null);
+    showScreen("quiz");
+    renderQuestion();
+  });
+
+  $("btn-prev").addEventListener("click", () => {
+    if (current > 0) {
+      current--;
+      renderQuestion();
+    }
+  });
+
+  $("btn-next").addEventListener("click", () => {
+    if (answers[current] == null) return;
+    if (current < QUESTIONS.length - 1) {
+      current++;
+      renderQuestion();
+    } else {
+      if (answers.some((a) => a == null)) {
+        current = answers.findIndex((a) => a == null);
+        renderQuestion();
+        showToast("尚有題目未作答，已跳至該題");
+        return;
+      }
+      $("progress-fill").style.width = "100%";
+      renderResult();
+    }
+  });
+
+  $("btn-retry").addEventListener("click", () => {
+    current = 0;
+    answers.fill(null);
+    showScreen("intro");
+  });
+
+  $("btn-copy").addEventListener("click", async () => {
+    const text = window.__lastResultText || "";
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast("已複製結果文字");
+    } catch (e) {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand("copy");
+        showToast("已複製結果文字");
+      } catch (err) {
+        showToast("複製失敗，請手動選取");
+      }
+      document.body.removeChild(ta);
+    }
+  });
+
+
+
+  /* —— IG Story PNG card (pure canvas, offline) —— */
+  function roundRect(ctx, x, y, w, h, r) {
+    var rr = Math.min(r, w / 2, h / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + rr, y);
+    ctx.arcTo(x + w, y, x + w, y + h, rr);
+    ctx.arcTo(x + w, y + h, x, y + h, rr);
+    ctx.arcTo(x, y + h, x, y, rr);
+    ctx.arcTo(x, y, x + w, y, rr);
+    ctx.closePath();
+  }
+
+  function drawCornerBrackets(ctx, x, y, w, h, len, colorA, colorB) {
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = colorA;
+    ctx.beginPath();
+    ctx.moveTo(x, y + len); ctx.lineTo(x, y); ctx.lineTo(x + len, y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x + w - len, y + h); ctx.lineTo(x + w, y + h); ctx.lineTo(x + w, y + h - len);
+    ctx.stroke();
+    ctx.strokeStyle = colorB;
+    ctx.beginPath();
+    ctx.moveTo(x + w - len, y); ctx.lineTo(x + w, y); ctx.lineTo(x + w, y + len);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x, y + h - len); ctx.lineTo(x, y + h); ctx.lineTo(x + len, y + h);
+    ctx.stroke();
+  }
+
+  function drawScoreBar(ctx, x, y, w, h, value, gradColors) {
+    ctx.fillStyle = "rgba(30,41,59,0.95)";
+    roundRect(ctx, x, y, w, h, 4);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(71,85,105,0.6)";
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    var fillW = Math.max(0, Math.min(1, (value - 1) / 4)) * w;
+    if (fillW > 0) {
+      var g = ctx.createLinearGradient(x, y, x + fillW, y);
+      g.addColorStop(0, gradColors[0]);
+      g.addColorStop(1, gradColors[1]);
+      ctx.fillStyle = g;
+      roundRect(ctx, x, y, fillW, h, 4);
+      ctx.fill();
+    }
+  }
+
+  function drawStoryCard(payload) {
+    var canvas = ensureStoryCanvas();
+    var ctx = canvas.getContext("2d");
+    var W = 1080, H = 1920;
+    var style = payload.style;
+    var anxiety = payload.anxiety;
+    var avoidance = payload.avoidance;
+    var key = payload.key;
+
+    var styleColors = {
+      secure: { main: "#6ee7b7", soft: "rgba(52,211,153,0.35)", node: "#34d399" },
+      anxious: { main: "#f9a8d4", soft: "rgba(244,114,182,0.35)", node: "#f472b6" },
+      avoidant: { main: "#fcd34d", soft: "rgba(251,191,36,0.3)", node: "#fbbf24" },
+      fearful: { main: "#c4b5fd", soft: "rgba(168,85,247,0.35)", node: "#a855f7" }
+    };
+    var sc = styleColors[key] || styleColors.secure;
+
+    // Background
+    var bg = ctx.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0, "#03050c");
+    bg.addColorStop(0.45, "#080c18");
+    bg.addColorStop(1, "#050810");
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    // Soft nebula washes
+    function wash(cx, cy, r, color) {
+      var g = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+      g.addColorStop(0, color);
+      g.addColorStop(1, "rgba(0,0,0,0)");
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+    }
+    wash(W * 0.2, H * 0.18, 420, "rgba(168,85,247,0.14)");
+    wash(W * 0.8, H * 0.35, 380, "rgba(56,189,248,0.1)");
+    wash(W * 0.5, H * 0.7, 500, sc.soft);
+
+    // Particles
+    ctx.fillStyle = "rgba(255,255,255,0.28)";
+    var dots = [[80,160],[160,420],[260,280],[400,140],[520,360],[700,200],[820,480],[940,320],[120,900],[300,1100],[880,980],[960,1200],[200,1500],[780,1600],[500,1700]];
+    for (var i = 0; i < dots.length; i++) {
+      ctx.beginPath();
+      ctx.arc(dots[i][0], dots[i][1], i % 3 === 0 ? 2.2 : 1.4, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // HUD frame inset
+    var fx = 64, fy = 96, fw = W - 128, fh = H - 192;
+    ctx.fillStyle = "rgba(8,12,24,0.55)";
+    roundRect(ctx, fx, fy, fw, fh, 8);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(56,189,248,0.3)";
+    ctx.lineWidth = 2;
+    roundRect(ctx, fx, fy, fw, fh, 8);
+    ctx.stroke();
+    drawCornerBrackets(ctx, fx, fy, fw, fh, 36, "#22d3ee", "#a855f7");
+
+    // Top badge
+    ctx.fillStyle = "#67e8f9";
+    ctx.beginPath();
+    ctx.arc(fx + 48, fy + 56, 6, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.font = "600 22px Orbitron, sans-serif";
+    ctx.fillStyle = "#67e8f9";
+    ctx.textAlign = "left";
+    ctx.fillText("ATTACHMENT  ·  RESULT CARD", fx + 68, fy + 64);
+
+    // Title
+    ctx.textAlign = "center";
+    ctx.font = "900 64px 'Noto Sans TC', sans-serif";
+    var titleGrad = ctx.createLinearGradient(fx + 80, 0, fx + fw - 80, 0);
+    titleGrad.addColorStop(0, "#e0f2fe");
+    titleGrad.addColorStop(0.5, "#c4b5fd");
+    titleGrad.addColorStop(1, "#67e8f9");
+    ctx.fillStyle = titleGrad;
+    ctx.fillText("依戀型人格測驗", W / 2, fy + 160);
+
+    ctx.font = "500 28px 'Noto Sans TC', sans-serif";
+    ctx.fillStyle = "#94a3b8";
+    ctx.fillText("親密關係傾向 · 自我探索", W / 2, fy + 210);
+
+    // Tendency block
+    ctx.font = "600 26px Orbitron, sans-serif";
+    ctx.fillStyle = "#64748b";
+    ctx.fillText("目前傾向", W / 2, fy + 320);
+
+    ctx.font = "900 72px 'Noto Sans TC', sans-serif";
+    ctx.fillStyle = sc.main;
+    ctx.shadowColor = sc.soft;
+    ctx.shadowBlur = 24;
+    ctx.fillText(style.zh, W / 2, fy + 410);
+    ctx.shadowBlur = 0;
+
+    ctx.font = "600 28px Orbitron, sans-serif";
+    ctx.fillStyle = "#94a3b8";
+    ctx.fillText(style.en, W / 2, fy + 460);
+
+    // Mini starmap
+    var mx = W / 2, my = fy + 780, mr = 210;
+    ctx.strokeStyle = "rgba(56,189,248,0.18)";
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(mx, my, mr, 0, Math.PI * 2);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(mx, my, mr * 0.55, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Cross beams
+    var beamGrad = ctx.createLinearGradient(mx - mr - 20, my, mx + mr + 20, my);
+    beamGrad.addColorStop(0, "transparent");
+    beamGrad.addColorStop(0.5, "rgba(56,189,248,0.35)");
+    beamGrad.addColorStop(1, "transparent");
+    ctx.strokeStyle = beamGrad;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(mx - mr - 30, my);
+    ctx.lineTo(mx + mr + 30, my);
+    ctx.stroke();
+    var beamGradV = ctx.createLinearGradient(mx, my - mr - 20, mx, my + mr + 20);
+    beamGradV.addColorStop(0, "transparent");
+    beamGradV.addColorStop(0.5, "rgba(168,85,247,0.35)");
+    beamGradV.addColorStop(1, "transparent");
+    ctx.strokeStyle = beamGradV;
+    ctx.beginPath();
+    ctx.moveTo(mx, my - mr - 30);
+    ctx.lineTo(mx, my + mr + 30);
+    ctx.stroke();
+
+    // Axis labels (horizontal only)
+    ctx.font = "700 22px 'Noto Sans TC', sans-serif";
+    ctx.fillStyle = "#f9a8d4";
+    ctx.fillText("焦慮偏高", mx, my - mr - 28);
+    ctx.fillStyle = "#7dd3fc";
+    ctx.fillText("焦慮偏低", mx, my + mr + 40);
+    ctx.textAlign = "right";
+    ctx.fillStyle = "#6ee7b7";
+    ctx.fillText("迴避偏低", mx - mr - 24, my + 8);
+    ctx.textAlign = "left";
+    ctx.fillStyle = "#fcd34d";
+    ctx.fillText("迴避偏高", mx + mr + 24, my + 8);
+    ctx.textAlign = "center";
+
+    // Four nodes
+    var nodes = [
+      { k: "anxious", x: mx - mr * 0.62, y: my - mr * 0.62, c: "#f472b6", label: "焦慮" },
+      { k: "fearful", x: mx + mr * 0.62, y: my - mr * 0.62, c: "#a855f7", label: "恐懼" },
+      { k: "secure", x: mx - mr * 0.62, y: my + mr * 0.62, c: "#34d399", label: "安全" },
+      { k: "avoidant", x: mx + mr * 0.62, y: my + mr * 0.62, c: "#fbbf24", label: "迴避" }
+    ];
+    for (var n = 0; n < nodes.length; n++) {
+      var nd = nodes[n];
+      var lit = nd.k === key;
+      ctx.globalAlpha = lit ? 1 : 0.35;
+      ctx.beginPath();
+      ctx.arc(nd.x, nd.y, lit ? 12 : 8, 0, Math.PI * 2);
+      ctx.fillStyle = nd.c;
+      ctx.shadowColor = nd.c;
+      ctx.shadowBlur = lit ? 18 : 0;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.font = (lit ? "700 " : "500 ") + "20px 'Noto Sans TC', sans-serif";
+      ctx.fillStyle = lit ? "#f1f5f9" : "#64748b";
+      ctx.fillText(nd.label, nd.x, nd.y + 32);
+      ctx.globalAlpha = 1;
+      if (lit) {
+        ctx.strokeStyle = "rgba(34,211,238,0.35)";
+        ctx.setLineDash([6, 8]);
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(mx, my);
+        ctx.lineTo(nd.x, nd.y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+    }
+
+    // Center hub
+    ctx.beginPath();
+    ctx.arc(mx, my, 8, 0, Math.PI * 2);
+    ctx.fillStyle = "#67e8f9";
+    ctx.shadowColor = "rgba(56,189,248,0.5)";
+    ctx.shadowBlur = 12;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Plot point from scores
+    var plotX = mx + ((avoidance - 3) / 2) * (mr * 0.7);
+    var plotY = my - ((anxiety - 3) / 2) * (mr * 0.7);
+    ctx.beginPath();
+    ctx.arc(plotX, plotY, 10, 0, Math.PI * 2);
+    ctx.fillStyle = "#ffffff";
+    ctx.shadowColor = sc.main;
+    ctx.shadowBlur = 16;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+    ctx.strokeStyle = sc.main;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(plotX, plotY, 18, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Score panels
+    var panY = fy + 1120;
+    var panW = (fw - 48) / 2;
+    var panH = 200;
+    var panGap = 32;
+    var pan1x = fx + 24;
+    var pan2x = fx + 24 + panW + panGap;
+
+    function scorePanel(px, title, code, val, high, colors) {
+      ctx.fillStyle = "rgba(3,6,14,0.75)";
+      roundRect(ctx, px, panY, panW, panH, 6);
+      ctx.fill();
+      ctx.strokeStyle = "rgba(56,189,248,0.25)";
+      ctx.lineWidth = 2;
+      roundRect(ctx, px, panY, panW, panH, 6);
+      ctx.stroke();
+
+      ctx.textAlign = "left";
+      ctx.font = "700 28px 'Noto Sans TC', sans-serif";
+      ctx.fillStyle = "#e2e8f0";
+      ctx.fillText(title, px + 28, panY + 48);
+      ctx.font = "600 18px Orbitron, sans-serif";
+      ctx.fillStyle = "#64748b";
+      ctx.fillText(code, px + 28, panY + 78);
+
+      ctx.textAlign = "right";
+      ctx.font = "700 48px Orbitron, sans-serif";
+      ctx.fillStyle = colors[1];
+      ctx.fillText(val.toFixed(1), px + panW - 28, panY + 64);
+
+      drawScoreBar(ctx, px + 28, panY + 110, panW - 56, 16, val, colors);
+
+      ctx.textAlign = "left";
+      ctx.font = "500 22px 'Noto Sans TC', sans-serif";
+      ctx.fillStyle = "#94a3b8";
+      ctx.fillText(high ? "偏高" : "偏低", px + 28, panY + 168);
+      ctx.textAlign = "right";
+      ctx.fillText("1.0 – 5.0", px + panW - 28, panY + 168);
+    }
+
+    scorePanel(pan1x, "焦慮軸讀數", "AXIS · ANXIETY", anxiety, anxiety > 3, ["#be185d", "#f9a8d4"]);
+    scorePanel(pan2x, "迴避軸讀數", "AXIS · AVOIDANCE", avoidance, avoidance > 3, ["#047857", "#6ee7b7"]);
+
+    // Disclaimer — no tips
+    ctx.textAlign = "center";
+    ctx.font = "500 24px 'Noto Sans TC', sans-serif";
+    ctx.fillStyle = "#64748b";
+    ctx.fillText("僅供自我探索，並非臨床診斷", W / 2, fy + fh - 100);
+
+    ctx.font = "600 20px Orbitron, sans-serif";
+    ctx.fillStyle = "#475569";
+    ctx.fillText("NEURAL STARMAP  ·  ATTACHMENT QUIZ", W / 2, fy + fh - 48);
+
+    ctx.textAlign = "left";
+  }
+
+  function ensureStoryCanvas() {
+    var canvas = $("story-canvas");
+    if (canvas) return canvas;
+    canvas = document.createElement("canvas");
+    canvas.id = "story-canvas";
+    canvas.width = 1080;
+    canvas.height = 1920;
+    canvas.setAttribute("aria-hidden", "true");
+    document.body.appendChild(canvas);
+    return canvas;
+  }
+
+  async function saveStoryPng() {
+    var payload = window.__lastResultPayload;
+    if (!payload) {
+      showToast("尚無結果可儲存");
+      return;
+    }
+    var btn = $("btn-save-story");
+    if (btn) btn.disabled = true;
+    try {
+      if (document.fonts && document.fonts.ready) {
+        await document.fonts.ready;
+      }
+      var canvas = ensureStoryCanvas();
+      drawStoryCard(payload);
+      canvas.toBlob(function (blob) {
+        try {
+          if (!blob) {
+            var a = document.createElement("a");
+            a.href = canvas.toDataURL("image/png");
+            a.download = "attachment-result.png";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+          } else {
+            var url = URL.createObjectURL(blob);
+            var a2 = document.createElement("a");
+            a2.href = url;
+            a2.download = "attachment-result.png";
+            document.body.appendChild(a2);
+            a2.click();
+            document.body.removeChild(a2);
+            setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+          }
+          showToast("已下載結果圖 PNG");
+        } finally {
+          if (btn) btn.disabled = false;
+        }
+      }, "image/png");
+    } catch (err) {
+      showToast("儲存失敗，請再試一次");
+      if (btn) btn.disabled = false;
+    }
+  }
+
+  // Intro first — must not depend on save-button wiring
+  (function initIntroStarmap() {
+    var stage = $("intro-stage");
+    if (!stage) return;
+    function forceVisible() {
+      stage.classList.remove("boot");
+      stage.classList.add("expanding", "revealed", "breathing");
+    }
+    try {
+      var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (reduce) {
+        forceVisible();
+        return;
+      }
+      requestAnimationFrame(function () {
+        setTimeout(function () {
+          stage.classList.add("expanding");
+          stage.classList.remove("boot");
+        }, 180);
+        setTimeout(function () {
+          stage.classList.add("revealed");
+        }, 720);
+        setTimeout(function () {
+          stage.classList.add("breathing");
+        }, 1500);
+      });
+      // Fail-safe: if still booting after ~2s, force map visible
+      setTimeout(function () {
+        if (stage.classList.contains("boot") || !stage.classList.contains("revealed")) {
+          forceVisible();
+        }
+      }, 2000);
+    } catch (e) {
+      forceVisible();
+    }
+  })();
+
+  try {
+    var saveBtn = $("btn-save-story");
+    if (saveBtn) {
+      saveBtn.addEventListener("click", function () {
+        saveStoryPng();
+      });
+    }
+    ensureStoryCanvas();
+  } catch (e) {
+    /* save wiring must never block the quiz */
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (screens.quiz.classList.contains("hidden")) return;
+    const n = parseInt(e.key, 10);
+    if (n >= 1 && n <= 5) {
+      answers[current] = n;
+      renderQuestion();
+      setTimeout(() => {
+        if (current < QUESTIONS.length - 1) {
+          current++;
+          renderQuestion();
+        } else {
+          $("btn-next").disabled = false;
+          $("btn-next").textContent = "查看結果";
+        }
+      }, 150);
+    }
+  });
+})();
+</script>
+</body>
+</html>
