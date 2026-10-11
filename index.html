@@ -1019,6 +1019,80 @@
     height: 1920px;
     pointer-events: none;
   }
+
+  #story-preview-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(3, 5, 12, 0.92);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  #story-preview-modal.open {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  #story-preview-modal .preview-frame {
+    position: relative;
+    width: min(100%, 360px);
+    max-height: min(72dvh, 640px);
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: 4px;
+    box-shadow: 0 0 40px rgba(56, 189, 248, 0.12), 0 24px 80px rgba(0,0,0,0.5);
+    overflow: auto;
+    background: #03050c;
+    -webkit-overflow-scrolling: touch;
+  }
+  #story-preview-modal img {
+    display: block;
+    width: 100%;
+    height: auto;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: default;
+  }
+  #story-preview-modal .preview-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    width: min(100%, 360px);
+  }
+  #story-preview-modal .preview-actions .btn {
+    width: auto;
+    flex: 1 1 140px;
+    padding: 0.65rem 0.9rem;
+    font-size: 0.88rem;
+  }
+  #story-preview-modal .preview-hint {
+    text-align: center;
+    font-size: 0.78rem;
+    color: #94a3b8;
+    max-width: 360px;
+    line-height: 1.55;
+  }
+  #story-preview-modal .preview-fallback {
+    text-align: center;
+    width: min(100%, 360px);
+  }
+  #story-preview-modal .preview-fallback button {
+    background: none;
+    border: none;
+    color: #64748b;
+    font-family: var(--font);
+    font-size: 0.72rem;
+    text-decoration: underline;
+    cursor: pointer;
+    padding: 0.25rem;
+  }
+  #story-preview-modal .preview-fallback button:hover {
+    color: #94a3b8;
+  }
   .save-hint {
     text-align: center;
     font-size: 0.72rem;
@@ -1408,10 +1482,24 @@
       <div class="btn-row btn-row-3">
         <button type="button" class="btn btn-secondary" id="btn-retry">再測一次</button>
         <button type="button" class="btn btn-ghost" id="btn-copy">複製結果</button>
-        <button type="button" class="btn btn-save-story" id="btn-save-story">儲存結果圖</button>
+        <button type="button" class="btn btn-save-story" id="btn-save-story">顯示結果圖</button>
       </div>
-      <p class="save-hint">下載 1080×1920 PNG，可直接用於 IG Story</p>
+      <p class="save-hint">長按圖片可儲存至相簿</p>
       <canvas id="story-canvas" width="1080" height="1920" aria-hidden="true"></canvas>
+
+      <div id="story-preview-modal" role="dialog" aria-modal="true" aria-labelledby="preview-title" hidden>
+        <p class="preview-hint" id="preview-title">長按下方圖片，選擇「儲存影像」即可存入相簿</p>
+        <div class="preview-frame">
+          <img id="story-preview-img" alt="依戀型人格測驗結果圖" />
+        </div>
+        <div class="preview-actions">
+          <button type="button" class="btn" id="btn-share-story" hidden>分享到…</button>
+          <button type="button" class="btn btn-ghost" id="btn-close-preview">關閉</button>
+        </div>
+        <div class="preview-fallback">
+          <button type="button" id="btn-download-fallback">下載檔案（電腦用）</button>
+        </div>
+      </div>
 
       <p class="disclaimer" style="margin-top:1.1rem;text-align:center;">
         結果僅供自我探索，<strong>並非臨床診斷</strong>。同一人在不同關係、不同時期也可能呈現不同傾向。
@@ -2146,10 +2234,85 @@
     return canvas;
   }
 
-  async function saveStoryPng() {
+  var __storyBlobUrl = null;
+  var __storyBlob = null;
+
+  function closeStoryPreview() {
+    var modal = $("story-preview-modal");
+    if (modal) {
+      modal.classList.remove("open");
+      modal.hidden = true;
+    }
+    document.body.style.overflow = "";
+  }
+
+  function openStoryPreview(blob) {
+    var modal = $("story-preview-modal");
+    var img = $("story-preview-img");
+    var shareBtn = $("btn-share-story");
+    if (!modal || !img) return;
+
+    if (__storyBlobUrl) {
+      try { URL.revokeObjectURL(__storyBlobUrl); } catch (e) {}
+    }
+    __storyBlob = blob;
+    __storyBlobUrl = URL.createObjectURL(blob);
+    img.src = __storyBlobUrl;
+
+    var canShare = false;
+    try {
+      var file = new File([blob], "attachment-result.png", { type: "image/png" });
+      canShare = !!(navigator.share && navigator.canShare && navigator.canShare({ files: [file] }));
+      window.__storyShareFile = file;
+    } catch (e) {
+      canShare = false;
+      window.__storyShareFile = null;
+    }
+    if (shareBtn) {
+      shareBtn.hidden = !canShare;
+    }
+
+    modal.hidden = false;
+    modal.classList.add("open");
+    document.body.style.overflow = "hidden";
+  }
+
+  function downloadStoryFallback() {
+    if (!__storyBlob && !__storyBlobUrl) {
+      showToast("請先顯示結果圖");
+      return;
+    }
+    var a = document.createElement("a");
+    a.href = __storyBlobUrl || "";
+    a.download = "attachment-result.png";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    showToast("已開始下載檔案");
+  }
+
+  async function shareStoryPng() {
+    if (!window.__storyShareFile || !navigator.share) {
+      showToast("此裝置不支援系統分享");
+      return;
+    }
+    try {
+      await navigator.share({
+        files: [window.__storyShareFile],
+        title: "依戀型人格測驗結果",
+        text: "我的依戀傾向結果（僅供自我探索）"
+      });
+    } catch (err) {
+      if (err && err.name !== "AbortError") {
+        showToast("分享未完成");
+      }
+    }
+  }
+
+  async function showStoryPreview() {
     var payload = window.__lastResultPayload;
     if (!payload) {
-      showToast("尚無結果可儲存");
+      showToast("尚無結果可顯示");
       return;
     }
     var btn = $("btn-save-story");
@@ -2163,29 +2326,16 @@
       canvas.toBlob(function (blob) {
         try {
           if (!blob) {
-            var a = document.createElement("a");
-            a.href = canvas.toDataURL("image/png");
-            a.download = "attachment-result.png";
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-          } else {
-            var url = URL.createObjectURL(blob);
-            var a2 = document.createElement("a");
-            a2.href = url;
-            a2.download = "attachment-result.png";
-            document.body.appendChild(a2);
-            a2.click();
-            document.body.removeChild(a2);
-            setTimeout(function () { URL.revokeObjectURL(url); }, 2000);
+            showToast("產生圖片失敗，請再試一次");
+            return;
           }
-          showToast("已下載結果圖 PNG");
+          openStoryPreview(blob);
         } finally {
           if (btn) btn.disabled = false;
         }
       }, "image/png");
     } catch (err) {
-      showToast("儲存失敗，請再試一次");
+      showToast("產生圖片失敗，請再試一次");
       if (btn) btn.disabled = false;
     }
   }
@@ -2231,9 +2381,32 @@
     var saveBtn = $("btn-save-story");
     if (saveBtn) {
       saveBtn.addEventListener("click", function () {
-        saveStoryPng();
+        showStoryPreview();
       });
     }
+    var closeBtn = $("btn-close-preview");
+    if (closeBtn) {
+      closeBtn.addEventListener("click", closeStoryPreview);
+    }
+    var shareBtn = $("btn-share-story");
+    if (shareBtn) {
+      shareBtn.addEventListener("click", function () {
+        shareStoryPng();
+      });
+    }
+    var dlBtn = $("btn-download-fallback");
+    if (dlBtn) {
+      dlBtn.addEventListener("click", downloadStoryFallback);
+    }
+    var modal = $("story-preview-modal");
+    if (modal) {
+      modal.addEventListener("click", function (e) {
+        if (e.target === modal) closeStoryPreview();
+      });
+    }
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") closeStoryPreview();
+    });
     ensureStoryCanvas();
   } catch (e) {
     /* save wiring must never block the quiz */
